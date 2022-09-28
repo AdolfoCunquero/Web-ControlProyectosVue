@@ -1,5 +1,6 @@
 <template>
     <v-container fluid>
+
       <v-row 
         class="mt-4 mb-2"
       >
@@ -36,158 +37,11 @@
         @page-count="pageCount = $event"
   
       >
-        <template v-slot:[`header.description`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.description ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-              <v-text-field
-                v-model="filters.description"
-                class="pa-4"
-                type="text"
-                label="Descripcion"
-                :autofocus="true"
-              ></v-text-field>
-              <v-btn
-                @click="filters.description = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
-        <template v-slot:[`header.date_prospecting`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.date_prospecting ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-              <v-text-field
-                v-model="filters.date_prospecting"
-                class="pa-4"
-                type="text"
-                label="Fecha"
-                :autofocus="true"
-              ></v-text-field>
-              <v-btn
-                @click="filters.date_prospecting = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
-        <template v-slot:[`header.initial_offer`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.initial_offer ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-              <v-text-field
-                v-model="filters.initial_offer"
-                class="pa-4"
-                type="text"
-                label="Propuesta inicial"
-                :autofocus="true"
-              ></v-text-field>
-              <v-btn
-                @click="filters.initial_offer = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
-        <template v-slot:[`header.final_offer`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.final_offer ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-              <v-text-field
-                v-model="filters.final_offer"
-                class="pa-4"
-                type="text"
-                label="Propuesta final"
-                :autofocus="true"
-              ></v-text-field>
-              <v-btn
-                @click="filters.final_offer = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
-        <template v-slot:[`header.status_code_text`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.status_code.toString() ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-  
-            <v-radio-group v-model="filters.status_code">
-              <v-radio
-                v-for="n in list_status"
-                :key="n.value"
-                :label="n.description"
-                :value="n.value"
-              ></v-radio>
-            </v-radio-group>
-              <v-btn
-                @click="filters.status_code = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
         <template v-slot:[`top`]>
           <v-toolbar
             flat
           >
-            <v-toolbar-title>Prospecciones</v-toolbar-title>
+            <v-toolbar-title>Etapas</v-toolbar-title>
             <v-divider
               class="mx-4"
               inset
@@ -261,17 +115,61 @@
                           md="12"
                         >
                           <v-text-field
-                            v-model="editedItem.description"
-                            label="Descripcion"
+                            v-model="editedItem.stage_name"
+                            label="Etapa"
                             dense
                             :rules="rules.requiered"
                           ></v-text-field>
                         </v-col>
-  
+                        
                         <v-col
                           cols="12"
                           sm="12"
                           md="12"
+                        >
+                          <v-text-field
+                            v-model="editedItem.description"
+                            label="Descripcion"
+                            dense
+                          ></v-text-field>
+                        </v-col>
+
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="6"
+                        >
+                          <v-menu
+                            v-model="menuStartDate"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.start_date"
+                                label="Fecha inicio"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                dense
+                                v-bind="attrs"
+                                v-on="on"
+                                :rules="rules.requiered"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="editedItem.start_date"
+                              @input="menuStartDate = false"
+                            ></v-date-picker>
+                          </v-menu>
+                        </v-col>
+
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="6"
                         >
                           <v-menu
                             v-model="menuEndDate"
@@ -283,8 +181,8 @@
                           >
                             <template v-slot:activator="{ on, attrs }">
                               <v-text-field
-                                v-model="editedItem.date_prospecting"
-                                label="Fecha"
+                                v-model="editedItem.end_date"
+                                label="Fecha fin"
                                 prepend-icon="mdi-calendar"
                                 readonly
                                 dense
@@ -294,7 +192,7 @@
                               ></v-text-field>
                             </template>
                             <v-date-picker
-                              v-model="editedItem.date_prospecting"
+                              v-model="editedItem.end_date"
                               @input="menuEndDate = false"
                             ></v-date-picker>
                           </v-menu>
@@ -303,31 +201,65 @@
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="6"
                         >
-                          <v-text-field
-                            v-model="editedItem.initial_offer"
-                            label="Propuesta inicial"
-                            dense
-                            :rules="rules.requiered"
-                          ></v-text-field>
+                          <v-menu
+                            v-model="menuStartRealDate"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.start_real_date"
+                                label="Fecha real inicio"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                dense
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="editedItem.start_real_date"
+                              @input="menuStartRealDate = false"
+                            ></v-date-picker>
+                          </v-menu>
                         </v-col>
-
 
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="6"
                         >
-                          <v-text-field
-                            v-model="editedItem.final_offer"
-                            label="Propuesta final"
-                            dense
-                            :rules="rules.requiered"
-                          ></v-text-field>
+                          <v-menu
+                            v-model="menuEndRealDate"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.end_real_date"
+                                label="Fecha real fin"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                dense
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="editedItem.end_real_date"
+                              @input="menuEndRealDate = false"
+                            ></v-date-picker>
+                          </v-menu>
                         </v-col>
-  
-                       
+
                         <v-col
                           cols="12"
                           sm="12"
@@ -443,7 +375,10 @@
         pageCount: 0,
         itemsPerPage: 10,
         formValid:true,
+        menuStartDate:false,
         menuEndDate:false,
+        menuStartRealDate: false,
+        menuEndRealDate :false,
         list_project:[],
         rules: {
           requiered:[
@@ -454,46 +389,45 @@
             v => (!isNaN(parseFloat(v))) || 'Campo requerido',
           ]
         },
-
         token:"",
         loading:false,
-        filters : {
-          description:"",
-          date_prospecting: "",
-          initial_offer:"",
-          final_offer:"",
-          status_code:""
-        },
+        filters : {},
         list_status :[],
         dialog: false,
         dialogDelete: false,
         headers: [
+          { text: 'Etapa', align: 'start', sortable: true, value: 'stage_name'},
           { text: 'Descripcion', align: 'start', sortable: true, value: 'description'},
-          { text: 'Fecha', align: 'start', sortable: true, value: 'date_prospecting'},
-          { text: 'Oferta inicial', align: 'start', sortable: true, value: 'initial_offer'},
-          { text: 'Oferta final', align: 'start', sortable: true, value: 'final_offer'},
+          { text: 'Fecha inicio', align: 'start', sortable: true, value: 'start_date'},
+          { text: 'Fecha fin', align: 'start', sortable: true, value: 'end_date'},
+          { text: 'Fecha real inicio', align: 'start', sortable: true, value: 'start_real_date'},
+          { text: 'Fecha real fin', align: 'start', sortable: true, value: 'end_real_date'},
           { text: 'Estado', value: 'status_code_text' , sortable: false},
           { text: 'Actions', value: 'actions', sortable: false },
         ],
         rows: [],
         editedIndex: -1,
         editedItem: {
-          id: 0,
-          project_id:0,
-          description:"",
-          date_prospecting: "",
-          initial_offer:"",
-          final_offer:"",
-          status_code : 1
+            id: 0,
+            project_id:0,
+            stage_name:"",
+            description: "",
+            start_date:"",
+            end_date:"",
+            start_real_date:"",
+            end_real_date:"",
+            status_code : 1
         },
         defaultItem: {
-          id: 0,
-          project_id:0,
-          description:"",
-          date_prospecting: "",
-          initial_offer:"",
-          final_offer:"",
-          status_code : 1
+            id: 0,
+            project_id:0,
+            stage_name:"",
+            description: "",
+            start_date:"",
+            end_date:"",
+            start_real_date:"",
+            end_real_date:"",
+            status_code : 1
         },
         icons:{
           mdiMagnify
@@ -503,7 +437,7 @@
   
       computed: {
         formTitle () {
-          return this.editedIndex === -1 ? 'Nueva oferta' : 'Editar oferta'
+          return this.editedIndex === -1 ? 'Nueva etapa' : 'Editar etapa'
         },
         buttonsEnabled(){
           return this.editedItem.project_id == null || this.editedItem.project_id == 0
@@ -529,8 +463,8 @@
           if(!this.editedItem.project_id){
             return;
           }
-
-          axios.get("/prospecting/project/"+this.editedItem.project_id, {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
+          this.loading = true;
+          axios.get("/stage/project/"+this.editedItem.project_id, {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
             $this.rows = res.data.data;
             $this.loading = false;
           }).catch(function(err){
@@ -541,7 +475,6 @@
           this.token = localStorage.controlProyectosToken;
           let $this = this;
           this.loading = true;
-  
           axios.get("/project", {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
             $this.list_project = res.data.data;
             $this.loading = false;
@@ -549,7 +482,7 @@
             console.log(err)
           })
   
-          axios.get("/catalog/prospecting/status_code",{headers:{Authorization:"Bearer "+this.token}}).then(function(res){
+          axios.get("/catalog/project_stage/status_code",{headers:{Authorization:"Bearer "+this.token}}).then(function(res){
             $this.list_status = res.data.data;
           }).catch(function(err){
             console.log(err)
@@ -574,16 +507,20 @@
         },
   
         editItem (item) {
+          let project_id = this.editedItem.project_id;
           this.editedIndex = this.rows.indexOf(item)
           this.editedItem = Object.assign({}, item)
           this.dialog = true
           this.formValid = true;
+          this.editedItem.project_id = project_id;
         },
   
         deleteItem (item) {
+          let project_id = this.editedItem.project_id;
           this.editedIndex = this.rows.indexOf(item)
           this.editedItem = Object.assign({}, item)
           this.dialogDelete = true
+          this.editedItem.project_id = project_id;
         },
   
         deleteItemConfirm () {
@@ -593,7 +530,7 @@
           this.loading = true;
           let $this = this;
           console.log(this.editedItem)
-          axios.delete("/prospecting/" + this.editedItem.id,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
+          axios.delete("/stage/" + this.editedItem.id,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
             $this.loadGrid();
           }).catch(function(err){
             console.log(err)
@@ -632,7 +569,7 @@
   
           if (this.editedIndex > -1) {
             
-            axios.put("/prospecting/"+this.editedItem.id,this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
+            axios.put("/stage/"+this.editedItem.id,this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
               $this.loadGrid();
             }).catch(function(err){
               console.log(err)
@@ -641,7 +578,7 @@
   
           } else {
             this.loading = true;
-            axios.post("/prospecting",this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
+            axios.post("/stage",this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
               $this.loadGrid();
             }).catch(function(err){
               console.log(err)

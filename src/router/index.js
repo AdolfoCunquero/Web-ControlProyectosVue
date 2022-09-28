@@ -4,6 +4,10 @@ import HomeView from '../views/HomeView.vue'
 import ProyectoView from '../views/ProyectoView.vue'
 import ClientView from '../views/ClientView.vue'
 import ProspectingView from '../views/ProspectingView.vue'
+import InvoiceView from '../views/InvoiceView.vue'
+import ProjectStageView from '../views/ProjectStageView.vue'
+import StageTaskView from '../views/StageTaskView.vue'
+import TracingView from '../views/TracingView.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +31,26 @@ const routes = [
     path: '/prospecting',
     name: 'prospecting',
     component: ProspectingView
+  },
+  {
+    path: '/invoice',
+    name: 'invoice',
+    component: InvoiceView
+  },
+  {
+    path: '/project/stage',
+    name: 'stage',
+    component: ProjectStageView
+  },
+  {
+    path: '/stage/task',
+    name: 'task',
+    component: StageTaskView
+  },
+  {
+    path: '/task/tracing',
+    name: 'tracing',
+    component: TracingView
   },
   // {
   //   path: '/about',

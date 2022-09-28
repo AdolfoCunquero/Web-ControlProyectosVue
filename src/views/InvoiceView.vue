@@ -1,5 +1,6 @@
 <template>
     <v-container fluid>
+
       <v-row 
         class="mt-4 mb-2"
       >
@@ -36,26 +37,84 @@
         @page-count="pageCount = $event"
   
       >
-        <template v-slot:[`header.description`]="{ header }">
+        <template v-slot:[`header.no_dcto`]="{ header }">
           {{ header.text }}
           <v-menu offset-y :close-on-content-click="false">
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.description ? 'primary' : ''">
+                <v-icon small :color="filters.no_dcto ? 'primary' : ''">
                   mdi-filter
                 </v-icon>
               </v-btn>
             </template>
             <div style="background-color: white; width: 280px">
               <v-text-field
-                v-model="filters.description"
+                v-model="filters.no_dcto"
                 class="pa-4"
                 type="text"
-                label="Descripcion"
+                label="No. Documento"
                 :autofocus="true"
               ></v-text-field>
               <v-btn
-                @click="filters.description = ''"
+                @click="filters.no_dcto = ''"
+                small
+                text
+                color="primary"
+                class="ml-2 mb-2"
+              >Limpiar</v-btn>
+            </div>
+          </v-menu>
+        </template>
+
+        <template v-slot:[`header.serie_dcto`]="{ header }">
+          {{ header.text }}
+          <v-menu offset-y :close-on-content-click="false">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on">
+                <v-icon small :color="filters.serie_dcto ? 'primary' : ''">
+                  mdi-filter
+                </v-icon>
+              </v-btn>
+            </template>
+            <div style="background-color: white; width: 280px">
+              <v-text-field
+                v-model="filters.serie_dcto"
+                class="pa-4"
+                type="text"
+                label="Serie Documento"
+                :autofocus="true"
+              ></v-text-field>
+              <v-btn
+                @click="filters.serie_dcto = ''"
+                small
+                text
+                color="primary"
+                class="ml-2 mb-2"
+              >Limpiar</v-btn>
+            </div>
+          </v-menu>
+        </template>
+
+        <template v-slot:[`header.amount`]="{ header }">
+          {{ header.text }}
+          <v-menu offset-y :close-on-content-click="false">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on">
+                <v-icon small :color="filters.amount ? 'primary' : ''">
+                  mdi-filter
+                </v-icon>
+              </v-btn>
+            </template>
+            <div style="background-color: white; width: 280px">
+              <v-text-field
+                v-model="filters.amount"
+                class="pa-4"
+                type="text"
+                label="Monto"
+                :autofocus="true"
+              ></v-text-field>
+              <v-btn
+                @click="filters.amount = ''"
                 small
                 text
                 color="primary"
@@ -65,26 +124,26 @@
           </v-menu>
         </template>
   
-        <template v-slot:[`header.date_prospecting`]="{ header }">
+        <template v-slot:[`header.date_invoice`]="{ header }">
           {{ header.text }}
           <v-menu offset-y :close-on-content-click="false">
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.date_prospecting ? 'primary' : ''">
+                <v-icon small :color="filters.date_invoice ? 'primary' : ''">
                   mdi-filter
                 </v-icon>
               </v-btn>
             </template>
             <div style="background-color: white; width: 280px">
               <v-text-field
-                v-model="filters.date_prospecting"
+                v-model="filters.date_invoice"
                 class="pa-4"
                 type="text"
-                label="Fecha"
+                label="Fecha pago"
                 :autofocus="true"
               ></v-text-field>
               <v-btn
-                @click="filters.date_prospecting = ''"
+                @click="filters.date_invoice = ''"
                 small
                 text
                 color="primary"
@@ -94,55 +153,26 @@
           </v-menu>
         </template>
   
-        <template v-slot:[`header.initial_offer`]="{ header }">
+        <template v-slot:[`header.proposed_payment_date`]="{ header }">
           {{ header.text }}
           <v-menu offset-y :close-on-content-click="false">
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.initial_offer ? 'primary' : ''">
+                <v-icon small :color="filters.proposed_payment_date ? 'primary' : ''">
                   mdi-filter
                 </v-icon>
               </v-btn>
             </template>
             <div style="background-color: white; width: 280px">
               <v-text-field
-                v-model="filters.initial_offer"
+                v-model="filters.proposed_payment_date"
                 class="pa-4"
                 type="text"
-                label="Propuesta inicial"
+                label="Fecha propuesta pago"
                 :autofocus="true"
               ></v-text-field>
               <v-btn
-                @click="filters.initial_offer = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
-        <template v-slot:[`header.final_offer`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.final_offer ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-              <v-text-field
-                v-model="filters.final_offer"
-                class="pa-4"
-                type="text"
-                label="Propuesta final"
-                :autofocus="true"
-              ></v-text-field>
-              <v-btn
-                @click="filters.final_offer = ''"
+                @click="filters.proposed_payment_date = ''"
                 small
                 text
                 color="primary"
@@ -187,7 +217,7 @@
           <v-toolbar
             flat
           >
-            <v-toolbar-title>Prospecciones</v-toolbar-title>
+            <v-toolbar-title>Facturas</v-toolbar-title>
             <v-divider
               class="mx-4"
               inset
@@ -261,20 +291,43 @@
                           md="12"
                         >
                           <v-text-field
-                            v-model="editedItem.description"
-                            label="Descripcion"
+                            v-model="editedItem.no_dcto"
+                            label="No. Documento"
                             dense
-                            :rules="rules.requiered"
                           ></v-text-field>
                         </v-col>
-  
+                        
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="12"
+                        >
+                          <v-text-field
+                            v-model="editedItem.serie_dcto"
+                            label="Serie Documento"
+                            dense
+                          ></v-text-field>
+                        </v-col>
+
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="12"
+                        >
+                          <v-text-field
+                            v-model="editedItem.amount"
+                            label="Monto"
+                            dense
+                          ></v-text-field>
+                        </v-col>
+
                         <v-col
                           cols="12"
                           sm="12"
                           md="12"
                         >
                           <v-menu
-                            v-model="menuEndDate"
+                            v-model="menuDateInvoice"
                             :close-on-content-click="false"
                             :nudge-right="40"
                             transition="scale-transition"
@@ -283,8 +336,8 @@
                           >
                             <template v-slot:activator="{ on, attrs }">
                               <v-text-field
-                                v-model="editedItem.date_prospecting"
-                                label="Fecha"
+                                v-model="editedItem.date_invoice"
+                                label="Fecha factura"
                                 prepend-icon="mdi-calendar"
                                 readonly
                                 dense
@@ -294,40 +347,45 @@
                               ></v-text-field>
                             </template>
                             <v-date-picker
-                              v-model="editedItem.date_prospecting"
-                              @input="menuEndDate = false"
+                              v-model="editedItem.date_invoice"
+                              @input="menuDateInvoice = false"
                             ></v-date-picker>
                           </v-menu>
                         </v-col>
 
-                        <v-col
-                          cols="12"
-                          sm="12"
-                          md="12"
-                        >
-                          <v-text-field
-                            v-model="editedItem.initial_offer"
-                            label="Propuesta inicial"
-                            dense
-                            :rules="rules.requiered"
-                          ></v-text-field>
-                        </v-col>
-
 
                         <v-col
                           cols="12"
                           sm="12"
                           md="12"
                         >
-                          <v-text-field
-                            v-model="editedItem.final_offer"
-                            label="Propuesta final"
-                            dense
-                            :rules="rules.requiered"
-                          ></v-text-field>
+                          <v-menu
+                            v-model="menuDateProposedPayment"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.proposed_payment_date"
+                                label="Fecha propuesta pago"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                dense
+                                v-bind="attrs"
+                                v-on="on"
+                                :rules="rules.requiered"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="editedItem.proposed_payment_date"
+                              @input="menuDateProposedPayment = false"
+                            ></v-date-picker>
+                          </v-menu>
                         </v-col>
-  
-                       
+
                         <v-col
                           cols="12"
                           sm="12"
@@ -443,7 +501,8 @@
         pageCount: 0,
         itemsPerPage: 10,
         formValid:true,
-        menuEndDate:false,
+        menuDateProposedPayment:false,
+        menuDateInvoice:false,
         list_project:[],
         rules: {
           requiered:[
@@ -458,42 +517,46 @@
         token:"",
         loading:false,
         filters : {
-          description:"",
-          date_prospecting: "",
-          initial_offer:"",
-          final_offer:"",
-          status_code:""
+            no_dcto:"",
+            serie_dcto: "",
+            amount:0,
+            date_invoice:"",
+            proposed_payment_date:"",
+            status_code:""
         },
         list_status :[],
         dialog: false,
         dialogDelete: false,
         headers: [
-          { text: 'Descripcion', align: 'start', sortable: true, value: 'description'},
-          { text: 'Fecha', align: 'start', sortable: true, value: 'date_prospecting'},
-          { text: 'Oferta inicial', align: 'start', sortable: true, value: 'initial_offer'},
-          { text: 'Oferta final', align: 'start', sortable: true, value: 'final_offer'},
+          { text: 'No. Documento', align: 'start', sortable: true, value: 'no_dcto'},
+          { text: 'Serie Documento', align: 'start', sortable: true, value: 'serie_dcto'},
+          { text: 'Monto', align: 'start', sortable: true, value: 'amount'},
+          { text: 'Fecha pago', align: 'start', sortable: true, value: 'date_invoice'},
+          { text: 'Fecha propuesta pago', align: 'start', sortable: true, value: 'proposed_payment_date'},
           { text: 'Estado', value: 'status_code_text' , sortable: false},
           { text: 'Actions', value: 'actions', sortable: false },
         ],
         rows: [],
         editedIndex: -1,
         editedItem: {
-          id: 0,
-          project_id:0,
-          description:"",
-          date_prospecting: "",
-          initial_offer:"",
-          final_offer:"",
-          status_code : 1
+            id: 0,
+            project_id:0,
+            no_dcto:"",
+            serie_dcto: "",
+            amount:0,
+            date_invoice:"",
+            proposed_payment_date:"",
+            status_code : 1
         },
         defaultItem: {
-          id: 0,
-          project_id:0,
-          description:"",
-          date_prospecting: "",
-          initial_offer:"",
-          final_offer:"",
-          status_code : 1
+            id: 0,
+            project_id:0,
+            no_dcto:"",
+            serie_dcto: "",
+            amount:0,
+            date_invoice:"",
+            proposed_payment_date:"",
+            status_code : 1
         },
         icons:{
           mdiMagnify
@@ -503,7 +566,7 @@
   
       computed: {
         formTitle () {
-          return this.editedIndex === -1 ? 'Nueva oferta' : 'Editar oferta'
+          return this.editedIndex === -1 ? 'Nueva factura' : 'Editar factura'
         },
         buttonsEnabled(){
           return this.editedItem.project_id == null || this.editedItem.project_id == 0
@@ -529,8 +592,8 @@
           if(!this.editedItem.project_id){
             return;
           }
-
-          axios.get("/prospecting/project/"+this.editedItem.project_id, {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
+          this.loading = true;
+          axios.get("/invoice/project/"+this.editedItem.project_id, {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
             $this.rows = res.data.data;
             $this.loading = false;
           }).catch(function(err){
@@ -549,7 +612,7 @@
             console.log(err)
           })
   
-          axios.get("/catalog/prospecting/status_code",{headers:{Authorization:"Bearer "+this.token}}).then(function(res){
+          axios.get("/catalog/invoice/status_code",{headers:{Authorization:"Bearer "+this.token}}).then(function(res){
             $this.list_status = res.data.data;
           }).catch(function(err){
             console.log(err)
@@ -593,7 +656,7 @@
           this.loading = true;
           let $this = this;
           console.log(this.editedItem)
-          axios.delete("/prospecting/" + this.editedItem.id,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
+          axios.delete("/invoice/" + this.editedItem.id,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
             $this.loadGrid();
           }).catch(function(err){
             console.log(err)
@@ -632,7 +695,7 @@
   
           if (this.editedIndex > -1) {
             
-            axios.put("/prospecting/"+this.editedItem.id,this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
+            axios.put("/invoice/"+this.editedItem.id,this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
               $this.loadGrid();
             }).catch(function(err){
               console.log(err)
@@ -641,7 +704,7 @@
   
           } else {
             this.loading = true;
-            axios.post("/prospecting",this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
+            axios.post("/invoice",this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
               $this.loadGrid();
             }).catch(function(err){
               console.log(err)

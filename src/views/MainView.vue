@@ -2,7 +2,7 @@
   <div>
     <v-app-bar color="primary" class="flex-grow-0" app dark height="50">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-app-bar-title>QIT</v-app-bar-title>
+      <v-app-bar-title>Proyectos</v-app-bar-title>
     </v-app-bar>
     <v-navigation-drawer app v-model="drawer" absolute temporary>
       <v-list-item>
@@ -48,14 +48,16 @@ export default {
     items: [
       { title: 'Clientes', icon: 'mdi-view-dashboard', route_name:"client" },
       { title: 'Proyectos', icon: 'mdi-account-box', route_name:"project" },
+      { title: 'Etapas de proyecto', icon: 'mdi-cog', route_name:"stage" },
+      { title: 'Tareas por etapa', icon: 'mdi-cog', route_name:"task" },
+      { title: 'Seguimiento', icon: 'mdi-cog', route_name:"tracing" },
       { title: 'Prospecciones', icon: 'mdi-cog', route_name:"prospecting" },
-//      { title: 'Settings', icon: 'mdi-cog' },
+      { title: 'Facturas', icon: 'mdi-cog', route_name:"invoice" },
     ],
     selectedItem: 1,
   }),
   methods:{
     redireccionar(item){
-      console.log("hla "+ item.route_name)
       //router.push(item.route_name)
       this.$router.push({ name: item.route_name })
       //$router.push({ name: item.route_name})
