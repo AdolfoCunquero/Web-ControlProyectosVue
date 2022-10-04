@@ -1,6 +1,6 @@
 <template>
     <v-container fluid>
-
+      <FormTitle title="Tareas"></FormTitle>
       <v-row 
         class="mt-4 mb-2"
       >
@@ -58,13 +58,6 @@
           <v-toolbar
             flat
           >
-            <v-toolbar-title>Tareas</v-toolbar-title>
-            <v-divider
-              class="mx-4"
-              inset
-              vertical
-            ></v-divider>
-  
             <v-col
               cols="12"
               sm="2"
@@ -386,250 +379,229 @@
   import { mdiMagnify } from '@mdi/js';
   
   import axios from 'axios';
+import FormTitle from '@/components/FormTitle.vue';
     export default {
-      data: () => ({
+    data: () => ({
         page: 1,
         pageCount: 0,
         itemsPerPage: 10,
-        formValid:true,
-        menuStartDate:false,
-        menuEndDate:false,
+        formValid: true,
+        menuStartDate: false,
+        menuEndDate: false,
         menuStartRealDate: false,
-        menuEndRealDate :false,
-        list_project:[],
-        list_stage:[],
+        menuEndRealDate: false,
+        list_project: [],
+        list_stage: [],
         rules: {
-          requiered:[
-            //v => !!v || 'Campo requerido',
-            v => ( String(v).trim() != "" ) || 'Campo requerido',
-          ],
-          numRequired:[
-            v => (!isNaN(parseFloat(v))) || 'Campo requerido',
-          ]
+            requiered: [
+                //v => !!v || 'Campo requerido',
+                v => (String(v).trim() != "") || "Campo requerido",
+            ],
+            numRequired: [
+                v => (!isNaN(parseFloat(v))) || "Campo requerido",
+            ]
         },
-        token:"",
-        loading:false,
-        filters : {},
-        list_status :[],
+        token: "",
+        loading: false,
+        filters: {},
+        list_status: [],
         dialog: false,
         dialogDelete: false,
         headers: [
-          { text: 'Tarea', align: 'start', sortable: true, value: 'task_name'},
-          { text: 'Descripcion', align: 'start', sortable: true, value: 'description'},
-          { text: 'Fecha inicio', align: 'start', sortable: true, value: 'start_date'},
-          { text: 'Fecha fin', align: 'start', sortable: true, value: 'end_date'},
-          { text: 'Fecha real inicio', align: 'start', sortable: true, value: 'start_real_date'},
-          { text: 'Fecha real fin', align: 'start', sortable: true, value: 'end_real_date'},
-          { text: 'Estado', value: 'status_code_text' , sortable: false},
-          { text: 'Actions', value: 'actions', sortable: false },
+            { text: "Tarea", align: "start", sortable: true, value: "task_name" },
+            { text: "Descripcion", align: "start", sortable: true, value: "description" },
+            { text: "Fecha inicio", align: "start", sortable: true, value: "start_date" },
+            { text: "Fecha fin", align: "start", sortable: true, value: "end_date" },
+            { text: "Fecha real inicio", align: "start", sortable: true, value: "start_real_date" },
+            { text: "Fecha real fin", align: "start", sortable: true, value: "end_real_date" },
+            { text: "Estado", value: "status_code_text", sortable: false },
+            { text: "Actions", value: "actions", sortable: false },
         ],
         rows: [],
         editedIndex: -1,
         editedItem: {
             id: 0,
-            stage_id:0,
-            project_id:0,
-            task_name:"",
+            stage_id: 0,
+            project_id: 0,
+            task_name: "",
             description: "",
-            start_date:"",
-            end_date:"",
-            start_real_date:"",
-            end_real_date:"",
-            status_code : 1
+            start_date: "",
+            end_date: "",
+            start_real_date: "",
+            end_real_date: "",
+            status_code: 1
         },
         defaultItem: {
             id: 0,
-            stage_id:0,
-            project_id:0,
-            task_name:"",
+            stage_id: 0,
+            project_id: 0,
+            task_name: "",
             description: "",
-            start_date:"",
-            end_date:"",
-            start_real_date:"",
-            end_real_date:"",
-            status_code : 1
+            start_date: "",
+            end_date: "",
+            start_real_date: "",
+            end_real_date: "",
+            status_code: 1
         },
-        icons:{
-          mdiMagnify
+        icons: {
+            mdiMagnify
         },
-        
-      }),
-  
-      computed: {
-        formTitle () {
-          return this.editedIndex === -1 ? 'Nueva tarea' : 'Editar tarea'
+    }),
+    computed: {
+        formTitle() {
+            return this.editedIndex === -1 ? "Nueva tarea" : "Editar tarea";
         },
-        buttonsEnabled(){
-          return this.editedItem.project_id == null || this.editedItem.project_id == 0 || this.editedItem.stage_id == null || this.editedItem.stage_id == 0
+        buttonsEnabled() {
+            return this.editedItem.project_id == null || this.editedItem.project_id == 0 || this.editedItem.stage_id == null || this.editedItem.stage_id == 0;
         },
-      },
-  
-      watch: {
-        dialog (val) {
-          val || this.close()
+    },
+    watch: {
+        dialog(val) {
+            val || this.close();
         },
-        dialogDelete (val) {
-          val || this.closeDelete()
+        dialogDelete(val) {
+            val || this.closeDelete();
         },
-      },
-  
-      created () {
-        this.initialize()
-      },
-  
-      methods: {
-        loadGrid(){
-          let $this = this;
-          if(!this.editedItem.stage_id){
-            return;
-          }
-          this.loading = true;
-          axios.get("/task/stage/"+this.editedItem.stage_id, {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
-            $this.rows = res.data.data;
-            $this.loading = false;
-          }).catch(function(err){
-            console.log(err)
-          })
+    },
+    created() {
+        this.initialize();
+    },
+    methods: {
+        loadGrid() {
+            let $this = this;
+            if (!this.editedItem.stage_id) {
+                return;
+            }
+            this.loading = true;
+            axios.get("/task/stage/" + this.editedItem.stage_id, { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+                $this.rows = res.data.data;
+                $this.loading = false;
+            }).catch(function (err) {
+                console.log(err);
+            });
         },
-
-        initialize () {
-          this.token = localStorage.controlProyectosToken;
-          let $this = this;
-          this.loading = true;
-          axios.get("/project", {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
-            $this.list_project = res.data.data;
-            $this.loading = false;
-          }).catch(function(err){
-            console.log(err)
-          })
-
-          axios.get("/catalog/stage_task/status_code",{headers:{Authorization:"Bearer "+this.token}}).then(function(res){
-            $this.list_status = res.data.data;
-          }).catch(function(err){
-            console.log(err)
-          })
-  
+        initialize() {
+            this.token = localStorage.controlProyectosToken;
+            let $this = this;
+            this.loading = true;
+            axios.get("/project", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+                $this.list_project = res.data.data;
+                $this.loading = false;
+            }).catch(function (err) {
+                console.log(err);
+            });
+            axios.get("/catalog/stage_task/status_code", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+                $this.list_status = res.data.data;
+            }).catch(function (err) {
+                console.log(err);
+            });
         },
-
-        changeProject(){
+        changeProject() {
             this.loading = false;
             let $this = this;
-            axios.get("/stage/project/"+this.editedItem.project_id, {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
+            axios.get("/stage/project/" + this.editedItem.project_id, { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.list_stage = res.data.data;
                 $this.loading = false;
-                $this.rows =[];
+                $this.rows = [];
                 $this.editedItem.stage_id = 0;
-            }).catch(function(err){
-                console.log(err)
-            })
+            }).catch(function (err) {
+                console.log(err);
+            });
         },
-  
-        changePage(page){
-          this.filters.page = page;
-          this.initialize();
-        },  
-  
-        getQueryStringParams(){
-          let params = []
-          let $this = this;
-          Object.keys(this.filters).forEach(function(item){ 
-            if($this.filters[item].toString()){
-              params.push(item+"="+ $this.filters[item]) 
-            }
-          })
-          return params.join("&&")
+        changePage(page) {
+            this.filters.page = page;
+            this.initialize();
         },
-  
-        editItem (item) {
-          let stage_id = this.editedItem.stage_id;
-          let project_id = this.editedItem.project_id;
-          this.editedIndex = this.rows.indexOf(item)
-          this.editedItem = Object.assign({}, item)
-          this.dialog = true
-          this.formValid = true;
-          this.editedItem.stage_id = stage_id;
-          this.editedItem.project_id = project_id;
+        getQueryStringParams() {
+            let params = [];
+            let $this = this;
+            Object.keys(this.filters).forEach(function (item) {
+                if ($this.filters[item].toString()) {
+                    params.push(item + "=" + $this.filters[item]);
+                }
+            });
+            return params.join("&&");
         },
-  
-        deleteItem (item) {
-          let stage_id = this.editedItem.stage_id;
-          let project_id = this.editedItem.project_id;
-          this.editedIndex = this.rows.indexOf(item)
-          this.editedItem = Object.assign({}, item)
-          this.dialogDelete = true
-          this.editedItem.stage_id = stage_id;
-          this.editedItem.project_id = project_id;
-        },
-  
-        deleteItemConfirm () {
-          this.rows.splice(this.editedIndex, 1)
-          this.closeDelete();
-  
-          this.loading = true;
-          let $this = this;
-          console.log(this.editedItem)
-          axios.delete("/task/" + this.editedItem.id,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
-            $this.loadGrid();
-          }).catch(function(err){
-            console.log(err)
-          })
-        },
-  
-        close () {
-          this.dialog = false
-          this.$nextTick(() => {
+        editItem(item) {
             let stage_id = this.editedItem.stage_id;
             let project_id = this.editedItem.project_id;
-            this.editedItem = Object.assign({}, this.defaultItem)
-            this.editedIndex = -1
-            this.$refs.form.resetValidation();
+            this.editedIndex = this.rows.indexOf(item);
+            this.editedItem = Object.assign({}, item);
+            this.dialog = true;
+            this.formValid = true;
             this.editedItem.stage_id = stage_id;
             this.editedItem.project_id = project_id;
-          })
         },
-  
-        closeDelete () {
-          this.dialogDelete = false
-          this.$nextTick(() => {
+        deleteItem(item) {
             let stage_id = this.editedItem.stage_id;
             let project_id = this.editedItem.project_id;
-            this.editedItem = Object.assign({}, this.defaultItem)
-            this.editedIndex = -1
+            this.editedIndex = this.rows.indexOf(item);
+            this.editedItem = Object.assign({}, item);
+            this.dialogDelete = true;
             this.editedItem.stage_id = stage_id;
             this.editedItem.project_id = project_id;
-          })
         },
-  
-        save () {
-          let $this = this;
-  
-          this.$refs.form.validate()
-  
-          if(!this.formValid){
-            return;
-          }
-  
-          if (this.editedIndex > -1) {
-            
-            axios.put("/task/"+this.editedItem.id,this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
-              $this.loadGrid();
-            }).catch(function(err){
-              console.log(err)
-            })
-            Object.assign(this.rows[this.editedIndex], this.editedItem)
-  
-          } else {
+        deleteItemConfirm() {
+            this.rows.splice(this.editedIndex, 1);
+            this.closeDelete();
             this.loading = true;
-            axios.post("/task",this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
-              $this.loadGrid();
-            }).catch(function(err){
-              console.log(err)
-            })
-  
-          }
-          this.close()
+            let $this = this;
+            console.log(this.editedItem);
+            axios.delete("/task/" + this.editedItem.id, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
+                $this.loadGrid();
+            }).catch(function (err) {
+                console.log(err);
+            });
         },
-      },
-    }
+        close() {
+            this.dialog = false;
+            this.$nextTick(() => {
+                let stage_id = this.editedItem.stage_id;
+                let project_id = this.editedItem.project_id;
+                this.editedItem = Object.assign({}, this.defaultItem);
+                this.editedIndex = -1;
+                this.$refs.form.resetValidation();
+                this.editedItem.stage_id = stage_id;
+                this.editedItem.project_id = project_id;
+            });
+        },
+        closeDelete() {
+            this.dialogDelete = false;
+            this.$nextTick(() => {
+                let stage_id = this.editedItem.stage_id;
+                let project_id = this.editedItem.project_id;
+                this.editedItem = Object.assign({}, this.defaultItem);
+                this.editedIndex = -1;
+                this.editedItem.stage_id = stage_id;
+                this.editedItem.project_id = project_id;
+            });
+        },
+        save() {
+            let $this = this;
+            this.$refs.form.validate();
+            if (!this.formValid) {
+                return;
+            }
+            if (this.editedIndex > -1) {
+                axios.put("/task/" + this.editedItem.id, this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
+                    $this.loadGrid();
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                Object.assign(this.rows[this.editedIndex], this.editedItem);
+            }
+            else {
+                this.loading = true;
+                axios.post("/task", this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
+                    $this.loadGrid();
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+            this.close();
+        },
+    },
+    components: { FormTitle }
+}
   </script>
   

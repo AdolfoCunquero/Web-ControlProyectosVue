@@ -1,5 +1,7 @@
 <template>
   <v-container fluid>
+    <FormTitle title="Proyectos"></FormTitle>
+
     <v-data-table
       :headers="headers"
       :items="rows"
@@ -231,13 +233,6 @@
         <v-toolbar
           flat
         >
-          <v-toolbar-title>Proyectos</v-toolbar-title>
-          <v-divider
-            class="mx-4"
-            inset
-            vertical
-          ></v-divider>
-
           <v-col
             cols="12"
             sm="2"
@@ -568,220 +563,197 @@
 import { mdiMagnify } from '@mdi/js';
 
 import axios from 'axios';
+import FormTitle from '@/components/FormTitle.vue';
   export default {
     data: () => ({
-      page: 1,
-      pageCount: 0,
-      itemsPerPage: 10,
-      formValid:true,
-      rules: {
-        requiered:[
-          //v => !!v || 'Campo requerido',
-          v => ( String(v).trim() != "" ) || 'Campo requerido',
+        page: 1,
+        pageCount: 0,
+        itemsPerPage: 10,
+        formValid: true,
+        rules: {
+            requiered: [
+                //v => !!v || 'Campo requerido',
+                v => (String(v).trim() != "") || "Campo requerido",
+            ],
+            numRequired: [
+                v => (!isNaN(parseFloat(v))) || "Campo requerido",
+            ]
+        },
+        menuStartDate: false,
+        menuEndDate: false,
+        menuRealStartDate: false,
+        menuRealEndDate: false,
+        token: "",
+        loading: false,
+        clients: [],
+        filters: {
+            project_name: "",
+            business_name: "",
+            start_date: "",
+            end_date: "",
+            real_start_date: "",
+            real_end_date: "",
+            status_code: ""
+        },
+        list_status: [],
+        dialog: false,
+        dialogDelete: false,
+        headers: [
+            { text: "ID", align: "start", sortable: true, value: "id" },
+            { text: "Nombre proyecto", align: "start", sortable: true, value: "project_name" },
+            { text: "Nombre cliente", align: "start", sortable: true, value: "business_name" },
+            { text: "Fecha inicio", value: "start_date", sortable: false },
+            { text: "Fecha fin", value: "end_date", sortable: false },
+            { text: "Fecha real inicio", value: "real_start_date", sortable: false },
+            { text: "Fecha real fin", value: "real_end_date", sortable: false },
+            { text: "Estado", value: "status_code_text", sortable: false },
+            { text: "Actions", value: "actions", sortable: false },
         ],
-        numRequired:[
-          v => (!isNaN(parseFloat(v))) || 'Campo requerido',
-        ]
-      },
-
-      menuStartDate: false,
-      menuEndDate: false,
-      menuRealStartDate: false,
-      menuRealEndDate: false,
-      token:"",
-      loading:false,
-      clients:[],
-      filters : {
-        project_name:"",
-        business_name: "",
-        start_date:"",
-        end_date:"",
-        real_start_date:"",
-        real_end_date:"",
-        status_code:""
-      },
-      list_status :[],
-      dialog: false,
-      dialogDelete: false,
-      headers: [
-        { text: 'ID', align: 'start', sortable: true, value: 'id'},
-        { text: 'Nombre proyecto', align: 'start', sortable: true, value: 'project_name'},
-        { text: 'Nombre cliente', align: 'start', sortable: true, value: 'business_name'},
-        { text: 'Fecha inicio', value: 'start_date', sortable: false },
-        { text: 'Fecha fin', value: 'end_date', sortable: false },
-        { text: 'Fecha real inicio', value: 'real_start_date', sortable: false },
-        { text: 'Fecha real fin', value: 'real_end_date',  sortable: false },
-        { text: 'Estado', value: 'status_code_text' , sortable: false},
-        { text: 'Actions', value: 'actions', sortable: false },
-      ],
-      rows: [],
-      editedIndex: -1,
-      editedItem: {
-        id: 0,
-        client_id:null,
-        project_name:"",
-        start_date: "",
-        end_date :"",
-        real_start_date :"",
-        real_end_date:"",
-        status_code : 1
-      },
-      defaultItem: {
-        id: 0,
-        client_id:null,
-        project_name:"",
-        start_date: "",
-        end_date :"",
-        real_start_date :"",
-        real_end_date:"",
-        status_code : 1
-      },
-      icons:{
-        mdiMagnify
-      },
-      
+        rows: [],
+        editedIndex: -1,
+        editedItem: {
+            id: 0,
+            client_id: null,
+            project_name: "",
+            start_date: "",
+            end_date: "",
+            real_start_date: "",
+            real_end_date: "",
+            status_code: 1
+        },
+        defaultItem: {
+            id: 0,
+            client_id: null,
+            project_name: "",
+            start_date: "",
+            end_date: "",
+            real_start_date: "",
+            real_end_date: "",
+            status_code: 1
+        },
+        icons: {
+            mdiMagnify
+        },
     }),
-
     computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'Nuevo proyecto' : 'Editar proyecto'
-      },
+        formTitle() {
+            return this.editedIndex === -1 ? "Nuevo proyecto" : "Editar proyecto";
+        },
     },
-
     watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogDelete (val) {
-        val || this.closeDelete()
-      },
+        dialog(val) {
+            val || this.close();
+        },
+        dialogDelete(val) {
+            val || this.closeDelete();
+        },
     },
-
-    created () {
-      this.initialize()
-    },
-
-    methods: {
-      initialize () {
-        this.token = localStorage.controlProyectosToken;
-        let $this = this;
-        this.loading = true;
-
-        let params = this.getQueryStringParams()
-        console.log(params)
-
-        axios.get("/project?"+params, {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
-          $this.rows = res.data.data;
-          $this.loading = false;
-          console.log(res.data.total_pages);
-        }).catch(function(err){
-          console.log(err)
-        })
-
-        axios.get("/client",{headers:{Authorization:"Bearer "+this.token}}).then(function(res){
-          $this.clients = res.data.data;
-        }).catch(function(err){
-          console.log(err)
-        })
-
-        axios.get("/catalog/project/status_code",{headers:{Authorization:"Bearer "+this.token}}).then(function(res){
-          $this.list_status = res.data.data;
-        }).catch(function(err){
-          console.log(err)
-        })
-
-      },
-
-      changePage(page){
-        this.filters.page = page;
+    created() {
         this.initialize();
-      },  
-
-      getQueryStringParams(){
-        let params = []
-        let $this = this;
-        Object.keys(this.filters).forEach(function(item){ 
-          if($this.filters[item].toString()){
-            params.push(item+"="+ $this.filters[item]) 
-          }
-        })
-        console.log($this.filters)
-        return params.join("&&")
-      },
-
-      editItem (item) {
-        this.editedIndex = this.rows.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-        this.formValid = true;
-      },
-
-      deleteItem (item) {
-        this.editedIndex = this.rows.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
-
-      deleteItemConfirm () {
-        this.rows.splice(this.editedIndex, 1)
-        this.closeDelete();
-
-        this.loading = true;
-        let $this = this;
-        console.log(this.editedItem)
-        axios.delete("/project/" + this.editedItem.id,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
-          $this.initialize();
-        }).catch(function(err){
-          console.log(err)
-        })
-      },
-
-      close () {
-        this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-          this.$refs.form.resetValidation();
-        })
-      },
-
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      save () {
-        let $this = this;
-
-        this.$refs.form.validate()
-
-        if(!this.formValid){
-          return;
-        }
-
-        if (this.editedIndex > -1) {
-          
-          axios.put("/project/"+this.editedItem.id,this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
-            $this.initialize();
-          }).catch(function(err){
-            console.log(err)
-          })
-          Object.assign(this.rows[this.editedIndex], this.editedItem)
-
-        } else {
-          this.loading = true;
-          axios.post("/project",this.editedItem,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
-            $this.initialize();
-          }).catch(function(err){
-            console.log(err)
-          })
-
-        }
-        this.close()
-      },
     },
-  }
+    methods: {
+        initialize() {
+            this.token = localStorage.controlProyectosToken;
+            let $this = this;
+            this.loading = true;
+            let params = this.getQueryStringParams();
+            console.log(params);
+            axios.get("/project?" + params, { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+                $this.rows = res.data.data;
+                $this.loading = false;
+                console.log(res.data.total_pages);
+            }).catch(function (err) {
+                console.log(err);
+            });
+            axios.get("/client", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+                $this.clients = res.data.data;
+            }).catch(function (err) {
+                console.log(err);
+            });
+            axios.get("/catalog/project/status_code", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+                $this.list_status = res.data.data;
+            }).catch(function (err) {
+                console.log(err);
+            });
+        },
+        changePage(page) {
+            this.filters.page = page;
+            this.initialize();
+        },
+        getQueryStringParams() {
+            let params = [];
+            let $this = this;
+            Object.keys(this.filters).forEach(function (item) {
+                if ($this.filters[item].toString()) {
+                    params.push(item + "=" + $this.filters[item]);
+                }
+            });
+            console.log($this.filters);
+            return params.join("&&");
+        },
+        editItem(item) {
+            this.editedIndex = this.rows.indexOf(item);
+            this.editedItem = Object.assign({}, item);
+            this.dialog = true;
+            this.formValid = true;
+        },
+        deleteItem(item) {
+            this.editedIndex = this.rows.indexOf(item);
+            this.editedItem = Object.assign({}, item);
+            this.dialogDelete = true;
+        },
+        deleteItemConfirm() {
+            this.rows.splice(this.editedIndex, 1);
+            this.closeDelete();
+            this.loading = true;
+            let $this = this;
+            console.log(this.editedItem);
+            axios.delete("/project/" + this.editedItem.id, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
+                $this.initialize();
+            }).catch(function (err) {
+                console.log(err);
+            });
+        },
+        close() {
+            this.dialog = false;
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem);
+                this.editedIndex = -1;
+                this.$refs.form.resetValidation();
+            });
+        },
+        closeDelete() {
+            this.dialogDelete = false;
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem);
+                this.editedIndex = -1;
+            });
+        },
+        save() {
+            let $this = this;
+            this.$refs.form.validate();
+            if (!this.formValid) {
+                return;
+            }
+            if (this.editedIndex > -1) {
+                axios.put("/project/" + this.editedItem.id, this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
+                    $this.initialize();
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                Object.assign(this.rows[this.editedIndex], this.editedItem);
+            }
+            else {
+                this.loading = true;
+                axios.post("/project", this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
+                    $this.initialize();
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+            this.close();
+        },
+    },
+    components: { FormTitle }
+}
 </script>

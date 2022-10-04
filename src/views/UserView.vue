@@ -1,12 +1,11 @@
 <template>
     <v-container fluid>
-
-      <FormTitle title="Clientes"></FormTitle>
+      
+      <FormTitle title="Usuarios"></FormTitle>
 
       <v-data-table
         :headers="headers"
         :items="rows"
-        
         class="elevation-1"
         :hide-default-footer="true"
         dense
@@ -16,154 +15,7 @@
         :items-per-page="itemsPerPage"
         @page-count="pageCount = $event"
   
-      >
-        <template v-slot:[`header.nit`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.nit ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-              <v-text-field
-                v-model="filters.nit"
-                class="pa-4"
-                type="text"
-                label="NIT"
-                :autofocus="true"
-              ></v-text-field>
-              <v-btn
-                @click="filters.nit = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
-        <template v-slot:[`header.business_name`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.business_name ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-              <v-text-field
-                v-model="filters.business_name"
-                class="pa-4"
-                type="text"
-                label="Nombre cliente"
-                :autofocus="true"
-              ></v-text-field>
-              <v-btn
-                @click="filters.business_name = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
-        <template v-slot:[`header.principal_contact`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.principal_contact ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-              <v-text-field
-                v-model="filters.principal_contact"
-                class="pa-4"
-                type="text"
-                label="Contacto principal"
-                :autofocus="true"
-              ></v-text-field>
-              <v-btn
-                @click="filters.principal_contact = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
-        <template v-slot:[`header.address`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.address ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-              <v-text-field
-                v-model="filters.address"
-                class="pa-4"
-                type="text"
-                label="Direccion"
-                :autofocus="true"
-              ></v-text-field>
-              <v-btn
-                @click="filters.address = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
-        <template v-slot:[`header.status_code_text`]="{ header }">
-          {{ header.text }}
-          <v-menu offset-y :close-on-content-click="false">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon small :color="filters.status_code.toString() ? 'primary' : ''">
-                  mdi-filter
-                </v-icon>
-              </v-btn>
-            </template>
-            <div style="background-color: white; width: 280px">
-  
-            <v-radio-group v-model="filters.status_code">
-              <v-radio
-                v-for="n in list_status"
-                :key="n.value"
-                :label="n.description"
-                :value="n.value"
-              ></v-radio>
-            </v-radio-group>
-              <v-btn
-                @click="filters.status_code = ''"
-                small
-                text
-                color="primary"
-                class="ml-2 mb-2"
-              >Limpiar</v-btn>
-            </div>
-          </v-menu>
-        </template>
-  
+      > 
         <template v-slot:[`top`]>
           <v-toolbar
             flat
@@ -236,10 +88,10 @@
                           md="12"
                         >
                           <v-text-field
-                            v-model="editedItem.nit"
-                            label="NIT"
+                            v-model="editedItem.username"
+                            label="Username"
                             dense
-                            :rules="rules.requiered"
+                            :rules="[rules.required]"
                           ></v-text-field>
                         </v-col>
   
@@ -249,10 +101,10 @@
                           md="12"
                         >
                           <v-text-field
-                            v-model="editedItem.business_name"
-                            label="Nombre cliente"
+                            v-model="editedItem.first_name"
+                            label="Nombres"
                             dense
-                            :rules="rules.requiered"
+                            :rules="[rules.required]"
                           ></v-text-field>
                         </v-col>
 
@@ -262,34 +114,30 @@
                           md="12"
                         >
                           <v-text-field
-                            v-model="editedItem.principal_contact"
-                            label="Contacto principal"
+                            v-model="editedItem.last_name"
+                            label="Apellidos"
                             dense
-                            :rules="rules.requiered"
+                            :rules="[rules.required]"
                           ></v-text-field>
                         </v-col>
-
 
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="6"
                         >
-                          <v-text-field
-                            v-model="editedItem.address"
-                            label="Direccion"
-                            dense
-                            :rules="rules.requiered"
-                          ></v-text-field>
+                            <v-checkbox
+                                dense
+                                v-model="editedItem.is_superuser"
+                                label="Administrador"
+                            ></v-checkbox>
                         </v-col>
-  
-                       
+
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="6"
                         >
-                        
                           <v-autocomplete
                             :items="list_status"
                             v-model="editedItem.status_code"
@@ -297,9 +145,45 @@
                             item-text="description"
                             label="Estado"
                             dense
-                            :rules="rules.numRequired"
+                            :rules="[rules.numRequired]"
                           ></v-autocomplete>
-  
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="6"
+                        >
+                            <v-text-field
+                                v-if="editedIndex == -1"
+                                v-model="editedItem.password"
+                                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                                :rules="[rules.required, rules.min]"
+                                :type="show1 ? 'text' : 'password'"
+                                label="Password"
+                                hint="Minimo 8 caracteres"
+                                counter
+                                dense
+                                @click:append="show1 = !show1"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="6"
+                          
+                        >
+                            <v-text-field
+                                v-if="editedIndex == -1"
+                                v-model="editedItem.re_password"
+                                :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+                                :rules="[rules.required, rules.min, passwordEqual]"
+                                :type="show2 ? 'text' : 'password'"
+                                label="Confirmar Password"
+                                hint="Minimo 8 caracteres"
+                                counter
+                                dense
+                                @click:append="show2 = !show2"
+                            ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-form>
@@ -356,6 +240,29 @@
           >
             mdi-delete
           </v-icon>
+
+          <v-btn
+            small
+            color="default"
+            class="ma-2"
+            @click="assingGroups(item.id)"
+          >
+            Grupos
+            <v-icon
+              right
+              dark
+            >
+            {{icons.mdiAccountGroup }}
+            </v-icon>
+          </v-btn>
+
+        </template>
+
+        <template v-slot:[`item.is_superuser`]="{ item }">
+            <v-simple-checkbox
+            v-model="item.is_superuser"
+            disabled
+            ></v-simple-checkbox>
         </template>
   
         <template v-slot:[`no-data`]>
@@ -390,70 +297,68 @@
   <script>
   
   import { mdiMagnify } from '@mdi/js';
+  import { mdiAccountGroup } from '@mdi/js';
   
   import axios from 'axios';
 import FormTitle from '@/components/FormTitle.vue';
     export default {
     data: () => ({
+        show1: false,
+        show2: false,
         page: 1,
         pageCount: 0,
         itemsPerPage: 10,
         formValid: true,
         rules: {
-            requiered: [
-                //v => !!v || 'Campo requerido',
-                v => (String(v).trim() != "") || "Campo requerido",
-            ],
-            numRequired: [
-                v => (!isNaN(parseFloat(v))) || "Campo requerido",
-            ]
+            required: value => !!value || "Campo requerido",
+            min: v => v.length >= 8 || "Min 8 caracteres",
+            numRequired: v => (!isNaN(parseFloat(v))) || "Campo requerido",
         },
         token: "",
         loading: false,
-        filters: {
-            nit: "",
-            business_name: "",
-            principal_contact: "",
-            address: "",
-            status_code: ""
-        },
+        filters: {},
         list_status: [],
         dialog: false,
         dialogDelete: false,
         headers: [
             { text: "ID", align: "start", sortable: true, value: "id" },
-            { text: "NIT", align: "start", sortable: true, value: "nit" },
-            { text: "Nombre cliente", align: "start", sortable: true, value: "business_name" },
-            { text: "Contacto Principal", align: "start", sortable: true, value: "principal_contact" },
-            { text: "Direccion", align: "start", sortable: true, value: "address" },
+            { text: "Username", align: "start", sortable: true, value: "username" },
+            { text: "Nombres", align: "start", sortable: true, value: "first_name" },
+            { text: "Apellidos", align: "start", sortable: true, value: "last_name" },
+            { text: "Administrador", align: "start", sortable: true, value: "is_superuser" },
             { text: "Estado", value: "status_code_text", sortable: false },
-            { text: "Actions", value: "actions", sortable: false },
+            { text: "Actions",  value: "actions", sortable: false },
         ],
         rows: [],
         editedIndex: -1,
         editedItem: {
             id: 0,
-            nit: "",
-            business_name: "",
-            principal_contact: "",
-            address: "",
+            username: "",
+            first_name: "",
+            last_name: "",
+            is_superuser: false,
+            password: "",
+            re_password: "",
             status_code: 1
         },
         defaultItem: {
             id: 0,
-            nit: "",
-            business_name: "",
-            principal_contact: "",
-            address: "",
+            username: "",
+            first_name: "",
+            last_name: "",
+            is_superuser: false,
+            password: "",
+            re_password: "",
             status_code: 1
         },
         icons: {
-            mdiMagnify
+            mdiMagnify,
+            mdiAccountGroup
         },
     }),
     computed: {
         formTitle() {
-            return this.editedIndex === -1 ? "Nuevo cliente" : "Editar cliente";
+            return this.editedIndex === -1 ? "Nuevo usuario" : "Editar usuario";
         },
     },
     watch: {
@@ -468,18 +373,27 @@ import FormTitle from '@/components/FormTitle.vue';
         this.initialize();
     },
     methods: {
+        passwordEqual(v) {
+            if (v != this.editedItem.password) {
+                return "Las contraseñas no coinciden";
+            }
+            return true;
+        },
+        assingGroups(id) {
+            this.$router.push({ name: "user-group", params: { id: id } });
+        },
         initialize() {
             this.token = localStorage.controlProyectosToken;
             let $this = this;
             this.loading = true;
-            let params = this.getQueryStringParams();
-            axios.get("/client?" + params, { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+            //let params = this.getQueryStringParams()
+            axios.get("/user", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.rows = res.data.data;
                 $this.loading = false;
             }).catch(function (err) {
                 console.log(err);
             });
-            axios.get("/catalog/client/status_code", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+            axios.get("/catalog/auth_user/status_code", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.list_status = res.data.data;
             }).catch(function (err) {
                 console.log(err);
@@ -516,7 +430,7 @@ import FormTitle from '@/components/FormTitle.vue';
             this.loading = true;
             let $this = this;
             console.log(this.editedItem);
-            axios.delete("/client/" + this.editedItem.id, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
+            axios.delete("/user/" + this.editedItem.id, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                 $this.initialize();
             }).catch(function (err) {
                 console.log(err);
@@ -543,8 +457,9 @@ import FormTitle from '@/components/FormTitle.vue';
             if (!this.formValid) {
                 return;
             }
+            this.editedItem.password = "test";
             if (this.editedIndex > -1) {
-                axios.put("/client/" + this.editedItem.id, this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
+                axios.put("/user/" + this.editedItem.id, this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                     $this.initialize();
                 }).catch(function (err) {
                     console.log(err);
@@ -553,7 +468,7 @@ import FormTitle from '@/components/FormTitle.vue';
             }
             else {
                 this.loading = true;
-                axios.post("/client", this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
+                axios.post("/user", this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                     $this.initialize();
                 }).catch(function (err) {
                     console.log(err);

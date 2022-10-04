@@ -8,14 +8,30 @@ import InvoiceView from '../views/InvoiceView.vue'
 import ProjectStageView from '../views/ProjectStageView.vue'
 import StageTaskView from '../views/StageTaskView.vue'
 import TracingView from '../views/TracingView.vue'
+import UserView from '../views/UserView.vue'
+import GroupView from '../views/GroupView.vue'
+import UserGroupView from '../views/UserGroupView'
+import GroupPermissionsView from '../views/GroupPermissionsView'
+import LoginView from '../views/LoginView'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
+    name: 'login',
+    component: LoginView,
+    meta:{
+      reload:false
+    }
+  },
+  {
+    path: '/home',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    meta:{
+      reload:true
+    }
   },
   {
     path: '/project',
@@ -51,6 +67,26 @@ const routes = [
     path: '/task/tracing',
     name: 'tracing',
     component: TracingView
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: UserView
+  },
+  {
+    path: '/group',
+    name: 'group',
+    component: GroupView
+  },
+  {
+    path: '/user-group/:id',
+    name: 'user-group',
+    component: UserGroupView
+  },
+  {
+    path: '/group-permissions/:id',
+    name: 'group-permissions',
+    component: GroupPermissionsView
   },
   // {
   //   path: '/about',
