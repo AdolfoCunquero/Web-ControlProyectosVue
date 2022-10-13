@@ -85,6 +85,7 @@
               </v-row>
            </main>
        </v-app>
+       <SnackBarVue v-if="snackBar.show" :snackBarInfo="snackBar"></SnackBarVue>
     </div>
   </template>
   <script>
@@ -95,13 +96,21 @@
   } from '@mdi/js';
   
   import axios from 'axios';
+  import SnackBarVue from '@/components/SnackBar.vue';
   
   export default {
+      components: {SnackBarVue},
       name:"Login",
       data () {
         return {
           icons:{
               mdiAccount,mdiLock 
+          },
+          snackBar:{
+            message:"",
+            show:false,
+            timeout:5000,
+            type:""
           },
           registrationValid:true,
           loginValid:true,
@@ -125,25 +134,40 @@
         }
       },
       methods:{
-          validateLogin:function(){
-              if(this.$refs.formLogin.validate()){
-                  let $this = this;
-                  axios.post("auth/login", this.loginData).then(function(response){
-                      let data = response.data;
-                      console.log(data)
-                      axios.defaults.headers = {
-                          "Authorization":"Bearer "+data.token
-                      }
-                      $this.$session.start();
-                      $this.$session.set('token', data.token);
-                      localStorage.controlProyectosToken = data.token;
-                      $this.$router.push({ name: 'home', force: true });
-                  }).catch(function(err){
-                      //$this.$swal("Error", err.response.data.message);
-                      console.log(err);
-                  });
-              }
-          },
+        showSnackBar(message, type, timeout=5000){
+            this.snackBar.message = message;
+            this.snackBar.show = true;
+            this.snackBar.timeout = timeout;
+            this.snackBar.type = type;
+
+            let $this = this;
+            setTimeout(function(){
+                $this.snackBar.show=false;
+            }, timeout)
+        },
+        validateLogin:function(){
+            if(this.$refs.formLogin.validate()){
+                let $this = this;
+                axios.post("auth/login", this.loginData).then(function(response){
+                    let data = response.data;
+                    console.log(data)
+                    axios.defaults.headers = {
+                        "Authorization":"Bearer "+data.token
+                    }
+                    $this.$session.start();
+                    $this.$session.set('token', data.token);
+                    //localStorage.controlProyectosToken = data.token;
+                    localStorage.selectedItem = 0;
+                    $this.$router.push({ name: 'home', force: true });
+                }).catch(function(err){
+                    $this.showSnackBar("Usuario o contraseña incorrecto", "error");
+                    $this.loginData.username="";
+                    $this.loginData.password="";
+                    $this.$refs.formLogin.resetValidation();
+                    console.log(err);
+                });
+            }
+        },
       },
       watch: {
         $route: {

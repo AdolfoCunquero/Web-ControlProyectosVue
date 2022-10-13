@@ -326,12 +326,12 @@
   
       created () {
         this.editedItem.user_id = this.$route.params.id;
+        this.token =  this.$session.get("token");
         this.initialize()
       },
   
       methods: {
         initialize () {
-          this.token = localStorage.controlProyectosToken;
           let $this = this;
           this.loading = true;
 

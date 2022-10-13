@@ -465,11 +465,11 @@ import FormTitle from '@/components/FormTitle.vue';
         },
     },
     created() {
+        this.token =  this.$session.get("token");
         this.initialize();
     },
     methods: {
         initialize() {
-            this.token = localStorage.controlProyectosToken;
             let $this = this;
             this.loading = true;
             let params = this.getQueryStringParams();

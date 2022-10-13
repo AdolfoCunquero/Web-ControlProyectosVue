@@ -649,11 +649,11 @@ import FormTitle from '@/components/FormTitle.vue';
         },
     },
     created() {
+        this.token =  this.$session.get("token");
         this.initialize();
     },
     methods: {
         initialize() {
-            this.token = localStorage.controlProyectosToken;
             let $this = this;
             this.loading = true;
             let params = this.getQueryStringParams();
@@ -665,7 +665,7 @@ import FormTitle from '@/components/FormTitle.vue';
             }).catch(function (err) {
                 console.log(err);
             });
-            axios.get("/client", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+            axios.get("/client/catalog", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.clients = res.data.data;
             }).catch(function (err) {
                 console.log(err);

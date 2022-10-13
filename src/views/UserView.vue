@@ -370,6 +370,7 @@ import FormTitle from '@/components/FormTitle.vue';
         },
     },
     created() {
+        this.token =  this.$session.get("token");
         this.initialize();
     },
     methods: {
@@ -383,7 +384,6 @@ import FormTitle from '@/components/FormTitle.vue';
             this.$router.push({ name: "user-group", params: { id: id } });
         },
         initialize() {
-            this.token = localStorage.controlProyectosToken;
             let $this = this;
             this.loading = true;
             //let params = this.getQueryStringParams()

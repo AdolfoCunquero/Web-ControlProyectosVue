@@ -295,13 +295,13 @@
       },
   
       created () {
+        this.token =  this.$session.get("token");
         this.initialize()
       },
   
       methods: {
         initialize () {
           this.editedItem.group_id = this.$route.params.id;
-          this.token = localStorage.controlProyectosToken;
           let $this = this;
           this.loading = true;
 

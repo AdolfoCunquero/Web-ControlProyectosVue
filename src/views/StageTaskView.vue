@@ -464,6 +464,7 @@ import FormTitle from '@/components/FormTitle.vue';
         },
     },
     created() {
+        this.token =  this.$session.get("token");
         this.initialize();
     },
     methods: {
@@ -481,10 +482,9 @@ import FormTitle from '@/components/FormTitle.vue';
             });
         },
         initialize() {
-            this.token = localStorage.controlProyectosToken;
             let $this = this;
             this.loading = true;
-            axios.get("/project", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+            axios.get("/project/catalog", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.list_project = res.data.data;
                 $this.loading = false;
             }).catch(function (err) {
@@ -499,7 +499,7 @@ import FormTitle from '@/components/FormTitle.vue';
         changeProject() {
             this.loading = false;
             let $this = this;
-            axios.get("/stage/project/" + this.editedItem.project_id, { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+            axios.get("/stage/catalog/" + this.editedItem.project_id, { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.list_stage = res.data.data;
                 $this.loading = false;
                 $this.rows = [];

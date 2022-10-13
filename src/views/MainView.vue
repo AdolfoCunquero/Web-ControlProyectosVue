@@ -107,47 +107,57 @@ export default {
     },
     token:"",
     items: [],
-    selectedItem: 100,
+    selectedItem: 0,
   }),
   mounted(){
     let selected = localStorage.selectedItem;
     if(selected != null){
       this.selectedItem = parseInt(selected);
+    }else{
+      this.selectedItem = 0;
     }
+    console.log(this.selectedItem)
   },
   created () {
-    if (!this.$session.exists()) {
-      this.$router.push({name:"login"});
-      return;
-    }
-    this.token =  this.$session.get("token");//localStorage.controlProyectosToken;
-    
+    this.token =  this.$session.get("token");
     axios.defaults.headers = {
         "Authorization":"Bearer "+this.token
     }
 
-    let $this = this;
-    axios.get("/module/menu").then(function(res){
-      $this.items = res.data.data;
-    }).catch(function(err){
-      console.log(err)
-    })
-
-    axios.get("/user/me",).then(function(res){
-      $this.user = Object.assign({}, res.data.data[0])
-      console.log($this.user)
-    }).catch(function(err){
-      console.log(err)
-    })
-
+    this.getMenu();
+    this.getCurrentUser();
   },
   methods:{
+    getCurrentUser(){
+      let $this = this;
+      axios.get("/user/me",{ headers: { Authorization: "Bearer " + this.token } }).then(function(res){
+        $this.user = Object.assign({}, res.data.data[0])
+      }).catch(function(err){
+        console.log(err)
+      })
+    },
+    getMenu(){
+      let $this = this;
+      axios.get("/module/menu").then(function(res){
+        $this.items = res.data.data;
+        $this.items.unshift({
+          id: 0,
+          title: "Home",
+          route_name: "home",
+          icon: "mdi-home"
+        })
+      }).catch(function(err){
+        console.log(err)
+      })
+    },
     redireccionar(item, i){
       localStorage.selectedItem = i;
-      this.$router.push({ name: item.route_name })
+      if(this.$route.name != item.route_name){
+        this.$router.push({ name: item.route_name })
+      }
     },
     logout(){
-      localStorage.controlProyectosToken = "";
+      localStorage.selectedItem = 0;
       this.$session.destroy();
       this.$router.push({name:"login"});
     },
@@ -157,6 +167,19 @@ export default {
         immediate: true,
         handler() {
             document.title = 'Control proyectos';
+          
+            if (!this.$session.exists()) {
+              if(this.$route.name != "login"){
+                this.$router.push({name:"login"});
+                return;
+              }
+            }else{
+              this.token =  this.$session.get("token");
+              if(this.$route.name == "home"){
+                this.getMenu();
+                this.getCurrentUser();
+              }
+            }
         }
       },
     },
