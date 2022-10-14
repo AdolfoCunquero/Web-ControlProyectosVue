@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid>
+    <v-container>
       <v-alert
         border="left"
         colored-border
@@ -37,7 +37,7 @@
           </v-col>
         </v-row>
         <v-row class="light--text">
-          <v-col cols="1" class="mt-1">
+          <v-col cols="2" class="mt-1">
             <strong>Administrador: </strong> 
           </v-col>
           <v-col cols="1">

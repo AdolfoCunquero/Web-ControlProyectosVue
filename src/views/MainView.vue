@@ -110,13 +110,7 @@ export default {
     selectedItem: 0,
   }),
   mounted(){
-    let selected = localStorage.selectedItem;
-    if(selected != null){
-      this.selectedItem = parseInt(selected);
-    }else{
-      this.selectedItem = 0;
-    }
-    console.log(this.selectedItem)
+    
   },
   created () {
     this.token =  this.$session.get("token");
@@ -167,7 +161,7 @@ export default {
         immediate: true,
         handler() {
             document.title = 'Control proyectos';
-          
+
             if (!this.$session.exists()) {
               if(this.$route.name != "login"){
                 this.$router.push({name:"login"});
@@ -178,6 +172,13 @@ export default {
               if(this.$route.name == "home"){
                 this.getMenu();
                 this.getCurrentUser();
+              }
+
+              let selected = localStorage.selectedItem;
+              if(selected != null){
+                this.selectedItem = parseInt(selected);
+              }else{
+                this.selectedItem = 0;
               }
             }
         }

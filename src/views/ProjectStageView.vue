@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid>
+    <v-container>
       <FormTitle title="Etapas por proyecto"></FormTitle>
       <v-row 
         class="mt-4 mb-2"

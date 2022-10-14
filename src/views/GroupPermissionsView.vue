@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid>
+    <v-container>
       <v-alert
         border="left"
         colored-border
@@ -218,7 +218,6 @@
           :length="pageCount"
         ></v-pagination>
       </div>
-  
     </v-container>
   </template>
   

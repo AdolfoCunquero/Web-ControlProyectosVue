@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <FormTitle title="Proyectos"></FormTitle>
 
     <v-data-table
@@ -602,10 +602,10 @@ import FormTitle from '@/components/FormTitle.vue';
             { text: "ID", align: "start", sortable: true, value: "id" },
             { text: "Nombre proyecto", align: "start", sortable: true, value: "project_name" },
             { text: "Nombre cliente", align: "start", sortable: true, value: "business_name" },
-            { text: "Fecha inicio", value: "start_date", sortable: false },
-            { text: "Fecha fin", value: "end_date", sortable: false },
-            { text: "Fecha real inicio", value: "real_start_date", sortable: false },
-            { text: "Fecha real fin", value: "real_end_date", sortable: false },
+            { text: "Fec inicio", value: "start_date", sortable: false },
+            { text: "Fec fin", value: "end_date", sortable: false },
+            { text: "Fec real inicio", value: "real_start_date", sortable: false },
+            { text: "Fec real fin", value: "real_end_date", sortable: false },
             { text: "Estado", value: "status_code_text", sortable: false },
             { text: "Actions", value: "actions", sortable: false },
         ],
