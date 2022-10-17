@@ -337,7 +337,7 @@ import FormTitle from '@/components/FormTitle.vue';
         dialog: false,
         dialogDelete: false,
         headers: [
-            { text: "Fecha", align: "start", sortable: true, value: "tracing_date" },
+            { text: "Fecha seguimiento", align: "start", sortable: true, value: "tracing_date" },
             { text: "Descripcion", align: "start", sortable: true, value: "description" },
             //{ text: "Tipo", value: "tracing_type_text", sortable: false },
             { text: "Tipo", value: "tracing_type", sortable: false },

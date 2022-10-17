@@ -233,7 +233,7 @@
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="4"
                         >
                           <v-text-field
                             v-model="editedItem.nit"
@@ -246,7 +246,7 @@
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="8"
                         >
                           <v-text-field
                             v-model="editedItem.business_name"
@@ -259,7 +259,7 @@
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="6"
                         >
                           <v-text-field
                             v-model="editedItem.principal_contact"
@@ -269,6 +269,17 @@
                           ></v-text-field>
                         </v-col>
 
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="6"
+                        >
+                          <v-text-field
+                            v-model="editedItem.country"
+                            label="Pais"
+                            dense
+                          ></v-text-field>
+                        </v-col>
 
                         <v-col
                           cols="12"
@@ -279,7 +290,6 @@
                             v-model="editedItem.address"
                             label="Direccion"
                             dense
-                            :rules="rules.requiered"
                           ></v-text-field>
                         </v-col>
   
@@ -425,6 +435,7 @@ import FormTitle from '@/components/FormTitle.vue';
             { text: "NIT", align: "start", sortable: true, value: "nit" },
             { text: "Nombre cliente", align: "start", sortable: true, value: "business_name" },
             { text: "Contacto Principal", align: "start", sortable: true, value: "principal_contact" },
+            { text: "Pais", align: "start", sortable: true, value: "country" },
             { text: "Direccion", align: "start", sortable: true, value: "address" },
             { text: "Estado", value: "status_code_text", sortable: false },
             { text: "Actions", value: "actions", sortable: false },
@@ -437,6 +448,7 @@ import FormTitle from '@/components/FormTitle.vue';
             business_name: "",
             principal_contact: "",
             address: "",
+            country:"",
             status_code: 1
         },
         defaultItem: {
@@ -445,6 +457,7 @@ import FormTitle from '@/components/FormTitle.vue';
             business_name: "",
             principal_contact: "",
             address: "",
+            country:"",
             status_code: 1
         },
         icons: {

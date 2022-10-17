@@ -5,6 +5,8 @@
     <v-data-table
       :headers="headers"
       :items="rows"
+      :single-expand="true"
+      show-expand
       
       class="elevation-1"
       :hide-default-footer="true"
@@ -16,6 +18,43 @@
       @page-count="pageCount = $event"
 
     >
+      <template v-slot:[`expanded-item`]="{  item }">
+        <td colspan="1">
+        </td>
+        <td colspan="2">
+          <span class="p-t-10">
+            Responsable Cliente: 
+          </span>
+          <p class="font-weight-bold">
+            {{ item.external_manager }}
+          </p>
+        </td>
+        <td colspan="1">
+          <span>
+            Puesto Externo: 
+          </span>
+          <p class="font-weight-bold">
+            {{ item.external_position }}
+          </p>
+        </td>
+        <td colspan="1">
+          <span>
+            Fecha real inicio: 
+          </span>
+          <p class="font-weight-bold">
+            {{ item.real_start_date }}
+          </p>
+        </td>
+        <td colspan="1">
+          <span>
+            Fecha real fin: 
+          </span>
+          <p class="font-weight-bold">
+            {{ item.real_end_date }}
+          </p>
+        </td>
+      </template>
+      
       <template v-slot:[`header.project_name`]="{ header }">
         {{ header.text }}
         <v-menu offset-y :close-on-content-click="false">
@@ -453,14 +492,32 @@
                       <v-col
                         cols="12"
                         sm="12"
+                        md="6"
+                      >
+                        <v-text-field
+                          v-model="editedItem.external_manager"
+                          label="Responsable cliente"
+                          dense
+                          :rules="rules.requiered"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        sm="12"
+                        md="6"
+                      >
+                        <v-text-field
+                          v-model="editedItem.external_position"
+                          label="Puesto externo"
+                          dense
+                        ></v-text-field>
+                      </v-col>
+
+                      <v-col
+                        cols="12"
+                        sm="12"
                         md="12"
                       >
-                        <!-- <v-checkbox
-                          v-model="editedItem.status_code"
-                          label="Estado"
-                          @change="editedItem.status_code ? editedItem.status_code=1 : editedItem.status_code=0"
-                        ></v-checkbox> -->
-
                         <v-autocomplete
                           :items="list_status"
                           v-model="editedItem.status_code"
@@ -527,6 +584,21 @@
         >
           mdi-delete
         </v-icon>
+
+        <v-btn
+            x-small
+            color="default"
+            class="ma-2"
+            @click="userProject(item.id)"
+          >
+            Usuarios
+            <v-icon
+              right
+              dark
+            >
+            mdi-format-list-checks
+            </v-icon>
+          </v-btn>
       </template>
 
       <template v-slot:[`no-data`]>
@@ -591,8 +663,8 @@ import FormTitle from '@/components/FormTitle.vue';
             business_name: "",
             start_date: "",
             end_date: "",
-            real_start_date: "",
-            real_end_date: "",
+            //real_start_date: "",
+            //real_end_date: "",
             status_code: ""
         },
         list_status: [],
@@ -600,12 +672,16 @@ import FormTitle from '@/components/FormTitle.vue';
         dialogDelete: false,
         headers: [
             { text: "ID", align: "start", sortable: true, value: "id" },
-            { text: "Nombre proyecto", align: "start", sortable: true, value: "project_name" },
-            { text: "Nombre cliente", align: "start", sortable: true, value: "business_name" },
+            { text: "Proyecto", align: "start", sortable: true, value: "project_name" },
+            { text: "Cliente", align: "start", sortable: true, value: "business_name" },
             { text: "Fec inicio", value: "start_date", sortable: false },
             { text: "Fec fin", value: "end_date", sortable: false },
-            { text: "Fec real inicio", value: "real_start_date", sortable: false },
-            { text: "Fec real fin", value: "real_end_date", sortable: false },
+            //{ text: "Fec real inicio", value: "real_start_date", sortable: false },
+            //{ text: "Fec real fin", value: "real_end_date", sortable: false },
+
+            //{ text: "Responsable cliente", value: "external_manager", sortable: false },
+            //{ text: "Puesto externo", value: "external_position", sortable: false },
+
             { text: "Estado", value: "status_code_text", sortable: false },
             { text: "Actions", value: "actions", sortable: false },
         ],
@@ -619,7 +695,9 @@ import FormTitle from '@/components/FormTitle.vue';
             end_date: "",
             real_start_date: "",
             real_end_date: "",
-            status_code: 1
+            status_code: 1,
+            external_manager:"",
+            external_position:""
         },
         defaultItem: {
             id: 0,
@@ -629,7 +707,9 @@ import FormTitle from '@/components/FormTitle.vue';
             end_date: "",
             real_start_date: "",
             real_end_date: "",
-            status_code: 1
+            status_code: 1,
+            external_manager:"",
+            external_position:""
         },
         icons: {
             mdiMagnify
@@ -676,9 +756,8 @@ import FormTitle from '@/components/FormTitle.vue';
                 console.log(err);
             });
         },
-        changePage(page) {
-            this.filters.page = page;
-            this.initialize();
+        userProject(id){
+          this.$router.push({ name: "user-projects", params: { id: id } });
         },
         getQueryStringParams() {
             let params = [];

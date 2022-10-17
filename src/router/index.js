@@ -13,6 +13,8 @@ import GroupView from '../views/GroupView.vue'
 import UserGroupView from '../views/UserGroupView'
 import GroupPermissionsView from '../views/GroupPermissionsView'
 import LoginView from '../views/LoginView'
+import ReportsView from '../views/ReportsView'
+import AssignationUserProjectView from '../views/AssignationUserProjectView'
 
 Vue.use(VueRouter)
 
@@ -87,6 +89,16 @@ const routes = [
     path: '/group-permissions/:id',
     name: 'group-permissions',
     component: GroupPermissionsView
+  },
+  {
+    path: '/reports',
+    name: 'reports',
+    component: ReportsView
+  },
+  {
+    path: '/user-projects/:id',
+    name: 'user-projects',
+    component: AssignationUserProjectView
   },
   // {
   //   path: '/about',
