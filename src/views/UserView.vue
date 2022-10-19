@@ -457,8 +457,8 @@ import FormTitle from '@/components/FormTitle.vue';
             if (!this.formValid) {
                 return;
             }
-            this.editedItem.password = "test";
             if (this.editedIndex > -1) {
+                this.editedItem.password = "test";
                 axios.put("/user/" + this.editedItem.id, this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                     $this.initialize();
                 }).catch(function (err) {

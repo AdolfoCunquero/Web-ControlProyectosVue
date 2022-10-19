@@ -28,6 +28,8 @@
       <v-data-table
         :headers="headers"
         :items="rows"
+        :single-expand="true"
+        show-expand
         
         class="elevation-1"
         :hide-default-footer="true"
@@ -39,6 +41,26 @@
         @page-count="pageCount = $event"
   
       >
+      <template v-slot:[`expanded-item`]="{  item }">
+        <td colspan="1">
+          </td>
+          <td colspan="2">
+            <span class="p-t-10">
+              Pago realizado: <span class="font-weight-bold">{{ item.total_payment }}</span>
+            </span>
+          </td>
+          <td colspan="2">
+            <span>
+              Fecha pago: <span class="font-weight-bold">{{ item.date_payment }}</span>
+            </span>
+          </td>
+          <td colspan="2">
+            <span>
+              Costo: <span class="font-weight-bold">{{ item.cost }}</span>
+            </span>
+          </td>
+        </template>
+        
         <template v-slot:[`header.no_dcto`]="{ header }">
           {{ header.text }}
           <v-menu offset-y :close-on-content-click="false">
@@ -283,24 +305,26 @@
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="6"
                         >
                           <v-text-field
                             v-model="editedItem.no_dcto"
                             label="No. Documento"
                             dense
+                            :rules="rules.requiered"
                           ></v-text-field>
                         </v-col>
                         
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="6"
                         >
                           <v-text-field
                             v-model="editedItem.serie_dcto"
                             label="Serie Documento"
                             dense
+                            :rules="rules.requiered"
                           ></v-text-field>
                         </v-col>
 
@@ -313,13 +337,14 @@
                             v-model="editedItem.amount"
                             label="Monto"
                             dense
+                            :rules="rules.requiered"
                           ></v-text-field>
                         </v-col>
 
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="6"
                         >
                           <v-menu
                             v-model="menuDateInvoice"
@@ -352,7 +377,7 @@
                         <v-col
                           cols="12"
                           sm="12"
-                          md="12"
+                          md="6"
                         >
                           <v-menu
                             v-model="menuDateProposedPayment"
@@ -379,6 +404,61 @@
                               @input="menuDateProposedPayment = false"
                             ></v-date-picker>
                           </v-menu>
+                        </v-col>
+
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="6"
+                        >
+                          <v-menu
+                            v-model="menuDatePayment"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.date_payment"
+                                label="Fecha Pago"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                dense
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="editedItem.date_payment"
+                              @input="menuDatePayment = false"
+                            ></v-date-picker>
+                          </v-menu>
+                        </v-col>
+
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="6"
+                        >
+                          <v-text-field
+                            v-model="editedItem.total_payment"
+                            label="Total pago"
+                            dense
+                          ></v-text-field>
+                        </v-col>
+
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="12"
+                        >
+                          <v-text-field
+                            v-model="editedItem.cost"
+                            label="Costo"
+                            dense
+                          ></v-text-field>
                         </v-col>
 
                         <v-col
@@ -499,6 +579,7 @@ import FormTitle from '@/components/FormTitle.vue';
         formValid: true,
         menuDateProposedPayment: false,
         menuDateInvoice: false,
+        menuDatePayment: false,
         list_project: [],
         rules: {
             requiered: [
@@ -541,7 +622,10 @@ import FormTitle from '@/components/FormTitle.vue';
             amount: 0,
             date_invoice: "",
             proposed_payment_date: "",
-            status_code: 1
+            status_code: 1,
+            date_payment:"",
+            total_payment:0,
+            cost:0
         },
         defaultItem: {
             id: 0,
@@ -551,7 +635,10 @@ import FormTitle from '@/components/FormTitle.vue';
             amount: 0,
             date_invoice: "",
             proposed_payment_date: "",
-            status_code: 1
+            status_code: 1,
+            date_payment:"",
+            total_payment:0,
+            cost:0
         },
         icons: {
             mdiMagnify
