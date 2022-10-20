@@ -15,9 +15,9 @@ var options = {
 }
 Vue.use(VueSession, options)
 
-axios.defaults.baseURL = "http://localhost:64420/api"
+//axios.defaults.baseURL = "http://localhost:64420/api"
 //axios.defaults.baseURL = "http://localhost:49153/api"
-//axios.defaults.baseURL = "https://api-control-proyectos.herokuapp.com/api"
+axios.defaults.baseURL = "https://api-control-proyectos.herokuapp.com/api"
 
 new Vue({
   router,
