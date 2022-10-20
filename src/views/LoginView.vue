@@ -1,10 +1,10 @@
 <template>
-    <div id="app" class="p-0" >
+    <div id="app" class="p-0">
        <v-app  class="p-0">
            <main>
               <v-row>
-                  <v-col cols="12" md="8" style="padding:0px; margin:0;">
-                      <img src="@/assets/banner.jpg" width="100%"/>
+                  <v-col cols="12" md="8" style="padding:0px; margin:0; height:670px">
+                      <img src="@/assets/banner.jpg" width="100%" height="100%"/>
                   </v-col>
                   <v-col cols="12" md="4" style="margin:0; padding:0;">
                       <v-card color="transparent">
@@ -19,7 +19,7 @@
                                   :key="item.tab"
   
                               >
-                                  {{ item.tab }}
+                                  Control Proyectos
                               </v-tab>
                           </v-tabs>
   
@@ -29,12 +29,19 @@
                                   style="height:600px;padding:15px;"
                               >
                               <div
-                                  class="transition-swing text-h4 mb-1 mt-15"
+                                  class="transition-swing text-h4 mb-1 mt-10"
                                   text="Login"
                               >Login
                               </div>
-                              
-                                  <div style="padding:50px 50px 50px 50px;margin:0px;" >
+                              <div class="d-flex flex-column justify-space-between align-center">
+                                    <v-img
+                                    
+                                    width="200"
+                                    src="@/assets/logoGrande.png"
+                                    ></v-img>
+                                </div>
+                                    
+                                  <div style="padding:25px 50px 50px 50px;margin:0px;" >
                                       <v-card-text> 
                                           <v-form
                                           ref="formLogin"
@@ -67,8 +74,9 @@
                                                   rounded
                                                   color="primary"
                                                   elevation="10"
-                                                  dark
                                                   @click.prevent="validateLogin"
+                                                  :loading="loading"
+                                                  :disabled="loading"
                                                   >
                                                   LOGIN
                                                   </v-btn>
@@ -84,8 +92,8 @@
                   </v-col>
               </v-row>
            </main>
+           <vue-toastr ref="mytoast"></vue-toastr>
        </v-app>
-       <SnackBarVue v-if="snackBar.show" :snackBarInfo="snackBar"></SnackBarVue>
     </div>
   </template>
   <script>
@@ -94,90 +102,94 @@
       mdiAccount,mdiLock   
   
   } from '@mdi/js';
-  
   import axios from 'axios';
-  import SnackBarVue from '@/components/SnackBar.vue';
+  import VueToastr from "vue-toastr";
   
   export default {
-      components: {SnackBarVue},
-      name:"Login",
-      data () {
-        return {
-          icons:{
-              mdiAccount,mdiLock 
-          },
-          snackBar:{
-            message:"",
-            show:false,
-            timeout:5000,
-            type:""
-          },
-          registrationValid:true,
-          loginValid:true,
-          loginData:{
-              username:'',
-              password:'',
-          },
-          rules:{
-              emailRules: [
-                  v => !!v || 'El campo es requerido',
-                  v => /.+@.+\..+/.test(v) || 'El email no es valido',
-              ],
-              textRules: [
-                  v => !!v || 'El campo es requerido',
-              ],
-          },
-          tab: null,
-          items: [
-            { tab: 'Login', content: '' },
-          ],
-        }
+    name: "Login",
+      components: {
+            "vue-toastr": VueToastr,
+            VueToastr,
       },
-      methods:{
-        showSnackBar(message, type, timeout=5000){
-            this.snackBar.message = message;
-            this.snackBar.show = true;
-            this.snackBar.timeout = timeout;
-            this.snackBar.type = type;
-
-            let $this = this;
-            setTimeout(function(){
-                $this.snackBar.show=false;
-            }, timeout)
+    data() {
+        return {
+            notification:{
+                msg:"",
+                type:""
+            },
+            icons: {
+                mdiAccount,
+                mdiLock
+            },
+            loading: false,
+            registrationValid: true,
+            loginValid: true,
+            loginData: {
+                username: "",
+                password: "",
+            },
+            rules: {
+                emailRules: [
+                    v => !!v || "El campo es requerido",
+                    v => /.+@.+\..+/.test(v) || "El email no es valido",
+                ],
+                textRules: [
+                    v => !!v || "El campo es requerido",
+                ],
+            },
+            tab: null,
+            items: [
+                { tab: "Login", content: "" },
+            ],
+        };
+    },
+    methods: {
+        showNotification(msg, type) {
+            this.$refs.mytoast.defaultProgressBar = false;
+            this.$refs.mytoast.defaultTimeout = 3000; 
+            this.$refs.mytoast.defaultPosition = "toast-top-center";
+            if(type == "error"){
+                this.$refs.mytoast.e(msg);
+            }else if(type =="success"){
+                this.$refs.mytoast.s(msg);
+            }
         },
-        validateLogin:function(){
-            if(this.$refs.formLogin.validate()){
+        validateLogin: function () {
+            if (this.$refs.formLogin.validate()) {
                 let $this = this;
-                axios.post("auth/login", this.loginData).then(function(response){
+                this.loading = true;
+                axios.post("auth/login", this.loginData).then(function (response) {
                     let data = response.data;
-                    console.log(data)
+                    console.log(data);
                     axios.defaults.headers = {
-                        "Authorization":"Bearer "+data.token
-                    }
+                        "Authorization": "Bearer " + data.token
+                    };
                     $this.$session.start();
-                    $this.$session.set('token', data.token);
+                    $this.$session.set("token", data.token);
                     //localStorage.controlProyectosToken = data.token;
                     localStorage.selectedItem = 0;
-                    $this.$router.push({ name: 'home', force: true });
-                }).catch(function(err){
-                    $this.showSnackBar("Usuario o contraseña incorrecto", "error");
-                    $this.loginData.username="";
-                    $this.loginData.password="";
+                    $this.loading = false;
+                    $this.$router.push({ name: "home", force: true });
+                }).catch(function (err) {
+                    $this.loading = false;
+                    $this.showNotification("Usuario / password incorrecto", "error");
+                    $this.loginData.username = "";
+                    $this.loginData.password = "";
                     $this.$refs.formLogin.resetValidation();
                     console.log(err);
                 });
             }
         },
-      },
-      watch: {
+    },
+    watch: {
         $route: {
             immediate: true,
             handler() {
-                document.title = 'Login';
+                document.title = "Login";
             }
         },
     },
-  }
+}
   </script>
   
   <style scoped>

@@ -1,5 +1,6 @@
 <template>
     <v-container>
+      <vue-toastr ref="mytoast"></vue-toastr>
       <FormTitle title="Seguimientos"></FormTitle>
       <v-row 
         class="mt-4 mb-2"
@@ -302,10 +303,11 @@
 <script>
   
 import { mdiMagnify } from '@mdi/js';
-  
+import VueToastr from "vue-toastr";
 import axios from 'axios';
 import FormTitle from '@/components/FormTitle.vue';
-    export default {
+
+export default {
     data: () => ({
         tasks:[],
         selectedTaskId:0,
@@ -370,7 +372,7 @@ import FormTitle from '@/components/FormTitle.vue';
     }),
     computed: {
         formTitle() {
-            return this.editedIndex === -1 ? "Nueva tarea" : "Editar tarea";
+            return this.editedIndex === -1 ? "Nuevo Seguimiento" : "Editar Seguimiento";
         },
         buttonsEnabled() {
             return this.projectId == null || this.projectId == 0 || this.stageId == null || this.stageId == 0 || this.selectedTaskId == null || this.selectedTaskId == 0;
@@ -389,6 +391,24 @@ import FormTitle from '@/components/FormTitle.vue';
         this.initialize();
     },
     methods: {
+        validateError(err){
+          console.log(err);
+          if(err.response.status == 401){
+            localStorage.selectedItem = 0;
+            this.$session.destroy();
+            this.$router.push({name:"login"});
+          }
+        },
+        showNotification(msg, type) {
+          this.$refs.mytoast.defaultProgressBar = false;
+          this.$refs.mytoast.defaultTimeout = 3000; 
+          this.$refs.mytoast.defaultPosition = "toast-top-center";
+          if(type == "error"){
+              this.$refs.mytoast.e(msg);
+          }else if(type =="success"){
+              this.$refs.mytoast.s(msg);
+          }
+        },
         loadGrid() {
             let $this = this;
             
@@ -402,7 +422,8 @@ import FormTitle from '@/components/FormTitle.vue';
                 $this.rows = res.data.data;
                 $this.loading = false;
             }).catch(function (err) {
-                console.log(err);
+                $this.showNotification("Ocurrio un error","error");
+                $this.validateError(err);
             });
         },
         initialize() {
@@ -412,13 +433,15 @@ import FormTitle from '@/components/FormTitle.vue';
                 $this.list_project = res.data.data;
                 $this.loading = false;
             }).catch(function (err) {
-                console.log(err);
+                $this.showNotification("Ocurrio un error","error");
+                $this.validateError(err);
             });
 
             axios.get("/catalog/tracing/tracing_type", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.list_status = res.data.data;
             }).catch(function (err) {
-                console.log(err);
+                $this.showNotification("Ocurrio un error","error");
+                $this.validateError(err);
             });
         },
         getChipColor(type){
@@ -434,7 +457,8 @@ import FormTitle from '@/components/FormTitle.vue';
                 $this.tasks = res.data.data;
                 $this.loading = false;
             }).catch(function (err) {
-                console.log(err);
+                $this.showNotification("Ocurrio un error","error");
+                $this.validateError(err);
             });
         },
         changeProject() {
@@ -447,7 +471,8 @@ import FormTitle from '@/components/FormTitle.vue';
                 $this.rows = [];
                 $this.stageId = 0;
             }).catch(function (err) {
-                console.log(err);
+                $this.showNotification("Ocurrio un error","error");
+                $this.validateError(err);
             });
         },
         filterData(id){
@@ -493,7 +518,8 @@ import FormTitle from '@/components/FormTitle.vue';
             axios.delete("/tracing/" + this.editedItem.id, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                 $this.loadGrid();
             }).catch(function (err) {
-                console.log(err);
+                $this.showNotification("Ocurrio un error","error");
+                $this.validateError(err);
             });
         },
         close() {
@@ -503,7 +529,7 @@ import FormTitle from '@/components/FormTitle.vue';
                 // let project_id = this.editedItem.project_id;
                 this.editedItem = Object.assign({}, this.defaultItem);
                 this.editedIndex = -1;
-                this.$refs.form.resetValidation();
+                //this.$refs.form.resetValidation(); TODO: ???
                 // this.editedItem.stage_id = stage_id;
                 // this.editedItem.project_id = project_id;
             });
@@ -525,13 +551,21 @@ import FormTitle from '@/components/FormTitle.vue';
             // if (!this.formValid) {
             //     return;
             // }
+
             this.editedItem.task_id = this.selectedTaskId;
+
+            if(this.editedItem.task_id == 0 || this.editedItem.description == "" || this.editedItem.tracing_type == 0){
+                $this.showNotification("Complete los campos","error");
+                return
+            }
+            
             if (this.editedIndex > -1) {
                 console.log(this.editedItem)
                 axios.put("/tracing/" + this.editedItem.id, this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                     $this.loadGrid();
                 }).catch(function (err) {
-                    console.log(err);
+                    $this.showNotification("Ocurrio un error","error");
+                    $this.validateError(err);
                 });
                 Object.assign(this.rows[this.editedIndex], this.editedItem);
             }
@@ -541,13 +575,18 @@ import FormTitle from '@/components/FormTitle.vue';
                 axios.post("/tracing", this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                     $this.loadGrid();
                 }).catch(function (err) {
-                    console.log(err);
+                    $this.showNotification("Ocurrio un error","error");
+                    $this.validateError(err);
                 });
             }
             this.close();
         },
     },
-    components: { FormTitle }
+    components: { 
+        FormTitle,
+        "vue-toastr": VueToastr,
+        VueToastr,
+    }
 }
   </script>
   

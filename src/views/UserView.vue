@@ -1,6 +1,6 @@
 <template>
     <v-container>
-      
+      <vue-toastr ref="mytoast"></vue-toastr>
       <FormTitle title="Usuarios"></FormTitle>
 
       <v-data-table
@@ -294,12 +294,13 @@
     </v-container>
   </template>
   
-  <script>
+<script>
   
-  import { mdiMagnify } from '@mdi/js';
-  import { mdiAccountGroup } from '@mdi/js';
-  
-  import axios from 'axios';
+import { mdiMagnify } from '@mdi/js';
+import { mdiAccountGroup } from '@mdi/js';
+import VueToastr from "vue-toastr";
+
+import axios from 'axios';
 import FormTitle from '@/components/FormTitle.vue';
     export default {
     data: () => ({
@@ -374,11 +375,29 @@ import FormTitle from '@/components/FormTitle.vue';
         this.initialize();
     },
     methods: {
+        validateError(err){
+          console.log(err);
+          if(err.response.status == 401){
+            localStorage.selectedItem = 0;
+            this.$session.destroy();
+            this.$router.push({name:"login"});
+          }
+        },
+        showNotification(msg, type) {
+          this.$refs.mytoast.defaultProgressBar = false;
+          this.$refs.mytoast.defaultTimeout = 3000; 
+          this.$refs.mytoast.defaultPosition = "toast-top-center";
+          if(type == "error"){
+              this.$refs.mytoast.e(msg);
+          }else if(type =="success"){
+              this.$refs.mytoast.s(msg);
+          }
+        },
         passwordEqual(v) {
-            if (v != this.editedItem.password) {
-                return "Las contraseñas no coinciden";
-            }
-            return true;
+          if (v != this.editedItem.password) {
+              return "Las contraseñas no coinciden";
+          }
+          return true;
         },
         assingGroups(id) {
             this.$router.push({ name: "user-group", params: { id: id } });
@@ -386,22 +405,20 @@ import FormTitle from '@/components/FormTitle.vue';
         initialize() {
             let $this = this;
             this.loading = true;
-            //let params = this.getQueryStringParams()
             axios.get("/user", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.rows = res.data.data;
                 $this.loading = false;
             }).catch(function (err) {
-                console.log(err);
+                $this.showNotification("Ocurrio un error al cargar info del usuario","error");
+                $this.validateError(err);
             });
+
             axios.get("/catalog/auth_user/status_code", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.list_status = res.data.data;
             }).catch(function (err) {
-                console.log(err);
+              $this.showNotification("Ocurrio un error al cargar catalogos","error");
+              $this.validateError(err);
             });
-        },
-        changePage(page) {
-            this.filters.page = page;
-            this.initialize();
         },
         getQueryStringParams() {
             let params = [];
@@ -433,7 +450,8 @@ import FormTitle from '@/components/FormTitle.vue';
             axios.delete("/user/" + this.editedItem.id, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                 $this.initialize();
             }).catch(function (err) {
-                console.log(err);
+                $this.showNotification("Ocurrio un error al eliminar usuario","error");
+                $this.validateError(err);
             });
         },
         close() {
@@ -462,7 +480,8 @@ import FormTitle from '@/components/FormTitle.vue';
                 axios.put("/user/" + this.editedItem.id, this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                     $this.initialize();
                 }).catch(function (err) {
-                    console.log(err);
+                    $this.showNotification("Ocurrio un error al guardar usuario","error");
+                    $this.validateError(err);
                 });
                 Object.assign(this.rows[this.editedIndex], this.editedItem);
             }
@@ -471,13 +490,18 @@ import FormTitle from '@/components/FormTitle.vue';
                 axios.post("/user", this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                     $this.initialize();
                 }).catch(function (err) {
-                    console.log(err);
+                    $this.showNotification("Ocurrio un error al guardar usuario","error");
+                    $this.validateError(err);
                 });
             }
             this.close();
         },
     },
-    components: { FormTitle }
+    components: { 
+      FormTitle, 
+      "vue-toastr": VueToastr,
+      VueToastr, 
+    }
 }
   </script>
   

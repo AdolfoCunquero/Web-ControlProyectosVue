@@ -1,5 +1,6 @@
 <template>
     <v-container>
+      <vue-toastr ref="mytoast"></vue-toastr>
       <v-alert
         border="left"
         colored-border
@@ -254,9 +255,14 @@
   
   import { mdiMagnify } from '@mdi/js';
   import { mdiArrowLeftCircle } from '@mdi/js';
+  import VueToastr from "vue-toastr";
   
   import axios from 'axios';
     export default {
+      components:{
+        "vue-toastr": VueToastr,
+        VueToastr,
+      },
       data: () => ({
         page: 1,
         pageCount: 0,
@@ -331,6 +337,24 @@
       },
   
       methods: {
+        validateError(err){
+          console.log(err);
+          if(err.response.status == 401){
+            localStorage.selectedItem = 0;
+            this.$session.destroy();
+            this.$router.push({name:"login"});
+          }
+        },
+        showNotification(msg, type) {
+          this.$refs.mytoast.defaultProgressBar = false;
+          this.$refs.mytoast.defaultTimeout = 3000; 
+          this.$refs.mytoast.defaultPosition = "toast-top-center";
+          if(type == "error"){
+              this.$refs.mytoast.e(msg);
+          }else if(type =="success"){
+              this.$refs.mytoast.s(msg);
+          }
+        },
         initialize () {
           let $this = this;
           this.loading = true;
@@ -340,21 +364,24 @@
             console.log($this.user_info)
             $this.loading = false;
           }).catch(function(err){
-            console.log(err)
+            $this.showNotification("Ocurrio un error","error");
+            $this.validateError(err);
           })
   
           axios.get("/user-group/"+this.editedItem.user_id, {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
             $this.rows = res.data.data;
             $this.loading = false;
           }).catch(function(err){
-            console.log(err)
+            $this.showNotification("Ocurrio un error","error");
+            $this.validateError(err);
           })
 
           axios.get("/group", {headers:{Authorization:"Bearer "+this.token}}).then(function(res){
             $this.list_groups = res.data.data;
             $this.loading = false;
           }).catch(function(err){
-            console.log(err)
+            $this.showNotification("Ocurrio un error","error");
+            $this.validateError(err);
           })
         },
 
@@ -377,7 +404,8 @@
           axios.delete("/user-group/" + this.editedItem.id,{headers:{Authorization:"Bearer "+this.token}}).then(function(){
             $this.initialize();
           }).catch(function(err){
-            console.log(err)
+            $this.showNotification("Ocurrio un error","error");
+            $this.validateError(err);
           })
         },
   
@@ -411,7 +439,8 @@
             $this.editedItem.user_id = $this.$route.params.id;
             $this.initialize();
           }).catch(function(err){
-            console.log(err)
+            $this.showNotification("Ocurrio un error","error");
+            $this.validateError(err);
           })
 
           this.close()

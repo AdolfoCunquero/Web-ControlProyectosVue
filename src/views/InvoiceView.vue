@@ -1,6 +1,6 @@
 <template>
     <v-container>
-
+      <vue-toastr ref="mytoast"></vue-toastr>
       <FormTitle title="Facturas"></FormTitle>
 
       <v-row 
@@ -568,10 +568,11 @@
   <script>
   
   import { mdiMagnify } from '@mdi/js';
-  
+  import VueToastr from "vue-toastr";
   import axios from 'axios';
-import FormTitle from '@/components/FormTitle.vue';
-    export default {
+  import FormTitle from '@/components/FormTitle.vue';
+
+  export default {
     data: () => ({
         page: 1,
         pageCount: 0,
@@ -665,6 +666,24 @@ import FormTitle from '@/components/FormTitle.vue';
         this.initialize();
     },
     methods: {
+        validateError(err){
+          console.log(err);
+          if(err.response.status == 401){
+            localStorage.selectedItem = 0;
+            this.$session.destroy();
+            this.$router.push({name:"login"});
+          }
+        },
+        showNotification(msg, type) {
+          this.$refs.mytoast.defaultProgressBar = false;
+          this.$refs.mytoast.defaultTimeout = 3000; 
+          this.$refs.mytoast.defaultPosition = "toast-top-center";
+          if(type == "error"){
+              this.$refs.mytoast.e(msg);
+          }else if(type =="success"){
+              this.$refs.mytoast.s(msg);
+          }
+        },
         loadGrid() {
             let $this = this;
             if (!this.editedItem.project_id) {
@@ -675,7 +694,8 @@ import FormTitle from '@/components/FormTitle.vue';
                 $this.rows = res.data.data;
                 $this.loading = false;
             }).catch(function (err) {
-                console.log(err);
+              $this.showNotification("Ocurrio un error","error");
+              $this.validateError(err);
             });
         },
         initialize() {
@@ -685,12 +705,14 @@ import FormTitle from '@/components/FormTitle.vue';
                 $this.list_project = res.data.data;
                 $this.loading = false;
             }).catch(function (err) {
-                console.log(err);
+              $this.showNotification("Ocurrio un error","error");
+              $this.validateError(err);
             });
             axios.get("/catalog/invoice/status_code", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
                 $this.list_status = res.data.data;
             }).catch(function (err) {
-                console.log(err);
+              $this.showNotification("Ocurrio un error","error");
+              $this.validateError(err);
             });
         },
         changePage(page) {
@@ -727,7 +749,8 @@ import FormTitle from '@/components/FormTitle.vue';
             axios.delete("/invoice/" + this.editedItem.id, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                 $this.loadGrid();
             }).catch(function (err) {
-                console.log(err);
+              $this.showNotification("Ocurrio un error","error");
+              $this.validateError(err);
             });
         },
         close() {
@@ -768,13 +791,18 @@ import FormTitle from '@/components/FormTitle.vue';
                 axios.post("/invoice", this.editedItem, { headers: { Authorization: "Bearer " + this.token } }).then(function () {
                     $this.loadGrid();
                 }).catch(function (err) {
-                    console.log(err);
+                  $this.showNotification("Ocurrio un error","error");
+                  $this.validateError(err);
                 });
             }
             this.close();
         },
     },
-    components: { FormTitle }
+    components: { 
+      FormTitle,
+      "vue-toastr": VueToastr,
+      VueToastr,
+    }
 }
   </script>
   

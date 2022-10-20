@@ -1,59 +1,21 @@
 <template>
-    <div class="text-center">
-      <v-snackbar
-        v-model="snackbar"
-        :timeout="timeout"
-        color="error"
-        v-if="type=='error'"
-      >
-        {{ text }}
-  
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="snackbar = false"
-          >
-            Cerrar
-          </v-btn>
-        </template>
-      </v-snackbar>
-
-      <v-snackbar
-        v-model="snackbar"
-        :timeout="timeout"
-        v-else
-      >
-        {{ text }}
-  
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            color="blue"
-            text
-            v-bind="attrs"
-            @click="snackbar = false"
-          >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-    </div>
-  </template>
-
+  <vue-toastr ref="mytoast"></vue-toastr>
+</template>
 <script>
+import VueToastr from "vue-toastr";
 export default {
-    props: ['snackBarInfo'],
-    data: function(){
-        return {
-            snackbar: this.snackBarInfo.show,
-            text: this.snackBarInfo.message,
-            timeout: this.snackBarInfo.timeout,
-            type: this.snackBarInfo.type
-        }
-    },
-    methods:{
-
+  components: {
+    "vue-toastr": VueToastr,
+    VueToastr,
+  },
+  props: ['msg',"type"],
+  created(){
+    this.$refs.mytoast.defaultProgressBar = false;
+    this.$refs.mytoast.defaultTimeout = 3000; 
+    this.$refs.mytoast.defaultPosition = "toast-top-center";
+    if(type == this.type){
+        this.$refs.mytoast.e(this.msg);
     }
+  }
 }
-  </script>
+</script>

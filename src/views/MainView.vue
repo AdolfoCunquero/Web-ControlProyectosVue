@@ -118,8 +118,10 @@ export default {
         "Authorization":"Bearer "+this.token
     }
 
-    this.getMenu();
-    this.getCurrentUser();
+    if(this.$route.name != "login"){
+      this.getMenu();
+      this.getCurrentUser();
+    }
   },
   methods:{
     getCurrentUser(){

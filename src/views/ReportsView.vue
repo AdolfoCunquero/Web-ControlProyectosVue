@@ -1,5 +1,6 @@
 <template>
     <v-container>
+        <vue-toastr ref="mytoast"></vue-toastr>
         <FormTitle title="Reportes"></FormTitle>
 
         <v-expansion-panels>
@@ -311,6 +312,7 @@
 
 import FormTitle from '@/components/FormTitle.vue';
 import axios from 'axios';
+import VueToastr from "vue-toastr";
 
 export default {
     data: () => ({
@@ -344,6 +346,24 @@ export default {
         this.token =  this.$session.get("token");
     },
     methods:{
+        validateError(err){
+            console.log(err);
+            if(err.response.status == 401){
+                localStorage.selectedItem = 0;
+                this.$session.destroy();
+                this.$router.push({name:"login"});
+            }
+        },
+        showNotification(msg, type) {
+            this.$refs.mytoast.defaultProgressBar = false;
+            this.$refs.mytoast.defaultTimeout = 3000; 
+            this.$refs.mytoast.defaultPosition = "toast-top-center";
+            if(type == "error"){
+                this.$refs.mytoast.e(msg);
+            }else if(type =="success"){
+                this.$refs.mytoast.s(msg);
+            }
+        },
         generarRerpot1(){
             if(this.report1.end_date != "" && this.report1.start_date != "" && this.report1.file_name != ""){
                 
@@ -364,6 +384,10 @@ export default {
                     link.click();
                     link.remove();
                     $this.report1.loading = false;
+                }).catch(function(err){
+                    $this.report1.loading = false;
+                    $this.showNotification("Ocurrio un error","error");
+                    $this.validateError(err);
                 })
             }
         },
@@ -387,6 +411,10 @@ export default {
                     link.click();
                     link.remove();
                     $this.report2.loading = false;
+                }).catch(function(err){
+                    $this.report2.loading = false;
+                    $this.showNotification("Ocurrio un error","error");
+                    $this.validateError(err);
                 })
             }
         },
@@ -410,10 +438,18 @@ export default {
                     link.click();
                     link.remove();
                     $this.report3.loading = false;
+                }).catch(function(err){
+                    $this.report3.loading = false;
+                    $this.showNotification("Ocurrio un error","error");
+                    $this.validateError(err);
                 })
             }
         }
     },
-    components:{FormTitle}
+    components:{
+        FormTitle,
+        "vue-toastr": VueToastr,
+        VueToastr,
+    }
 }
 </script>
