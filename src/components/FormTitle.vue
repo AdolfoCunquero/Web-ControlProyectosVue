@@ -3,7 +3,7 @@
         border="left"
         colored-border
         color="indigo"
-        elevation="2"
+        elevation="1"
     >
         <div class="text-h5 active">
             {{title}}

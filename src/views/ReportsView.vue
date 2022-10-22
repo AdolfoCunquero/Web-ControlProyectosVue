@@ -1,310 +1,315 @@
 <template>
     <v-container>
-        <vue-toastr ref="mytoast"></vue-toastr>
-        <FormTitle title="Reportes"></FormTitle>
+        <v-card
+            elevation="2"
+            class="mx-auto"
+            style="padding:20px;"
+        >
+            <vue-toastr ref="mytoast"></vue-toastr>
+            <FormTitle title="Reportes"></FormTitle>
 
-        <v-expansion-panels>
-            <v-expansion-panel>
-                <v-expansion-panel-header>
-                    <v-row no-gutters>
-                        <v-col cols="12">
-                            <p class="font-weight-bold">
-                                Seguimiento de proyectos
-                            </p>
-                        </v-col>
-                    </v-row>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                    <v-row>
-                        <v-col cols="12" sm="12" md="4">
-                            <v-text-field
-                                v-model="report1.file_name"
-                                label="Nombre del archivo Excel"
-                                solo
-                            ></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row
-                        justify="space-around"
-                        no-gutters
-                    >
-                        <v-col cols="12" sm="12" md="2">
-                            <v-menu
-                                v-model="report1.menu_start_date"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                            >
-                            <template v-slot:activator="{ on, attrs }">
+            <v-expansion-panels>
+                <v-expansion-panel>
+                    <v-expansion-panel-header>
+                        <v-row no-gutters>
+                            <v-col cols="12">
+                                <p class="font-weight-bold">
+                                    Seguimiento de proyectos
+                                </p>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                        <v-row>
+                            <v-col cols="12" sm="12" md="4">
                                 <v-text-field
+                                    v-model="report1.file_name"
+                                    label="Nombre del archivo Excel"
+                                    solo
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row
+                            justify="space-around"
+                            no-gutters
+                        >
+                            <v-col cols="12" sm="12" md="2">
+                                <v-menu
+                                    v-model="report1.menu_start_date"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="auto"
+                                >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                        v-model="report1.start_date"
+                                        label="Fecha inicio"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
                                     v-model="report1.start_date"
-                                    label="Fecha inicio"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    dense
-                                    v-bind="attrs"
-                                    v-on="on"
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                                v-model="report1.start_date"
-                                @input="report1.menu_start_date = false"
-                            ></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="2">
-                            <v-menu
-                                v-model="report1.menu_end_date"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                            >
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
+                                    @input="report1.menu_start_date = false"
+                                ></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="2">
+                                <v-menu
+                                    v-model="report1.menu_end_date"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="auto"
+                                >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                        v-model="report1.end_date"
+                                        label="Fecha fin"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
                                     v-model="report1.end_date"
-                                    label="Fecha fin"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    dense
-                                    v-bind="attrs"
-                                    v-on="on"
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                                v-model="report1.end_date"
-                                @input="report1.menu_end_date = false"
-                            ></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="8">
-                            <v-divider
-                                class="mx-4"
-                                inset
-                                vertical
-                            ></v-divider>
-                            <v-btn
-                                elevation="2"
-                                large
-                                color="success"
-                                @click="generarRerpot1"
-                                :loading="report1.loading"
-                                :disabled="report1.loading"
-                            >
-                                Descargar
-                                <v-icon>
-                                    mdi-microsoft-excel 
-                                </v-icon>
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </v-expansion-panel-content>
-            </v-expansion-panel>
+                                    @input="report1.menu_end_date = false"
+                                ></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="8">
+                                <v-divider
+                                    class="mx-4"
+                                    inset
+                                    vertical
+                                ></v-divider>
+                                <v-btn
+                                    elevation="2"
+                                    large
+                                    color="success"
+                                    @click="generarRerpot1"
+                                    :loading="report1.loading"
+                                    :disabled="report1.loading"
+                                >
+                                    Descargar
+                                    <v-icon>
+                                        mdi-microsoft-excel 
+                                    </v-icon>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-content>
+                </v-expansion-panel>
 
-            <v-expansion-panel>
-                <v-expansion-panel-header>
-                    <v-row no-gutters>
-                        <v-col cols="12">
-                            <p class="font-weight-bold">
-                                Estado de proyectos
-                            </p>
-                        </v-col>
-                    </v-row>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                    <v-row>
-                        <v-col cols="12" sm="12" md="4">
-                            <v-text-field
-                                v-model="report2.file_name"
-                                label="Nombre del archivo Excel"
-                                solo
-                            ></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row
-                        justify="space-around"
-                        no-gutters
-                    >
-                        <v-col cols="12" sm="12" md="2">
-                            <v-menu
-                                v-model="report2.menu_start_date"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                            >
-                            <template v-slot:activator="{ on, attrs }">
+                <v-expansion-panel>
+                    <v-expansion-panel-header>
+                        <v-row no-gutters>
+                            <v-col cols="12">
+                                <p class="font-weight-bold">
+                                    Estado de proyectos
+                                </p>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                        <v-row>
+                            <v-col cols="12" sm="12" md="4">
                                 <v-text-field
+                                    v-model="report2.file_name"
+                                    label="Nombre del archivo Excel"
+                                    solo
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row
+                            justify="space-around"
+                            no-gutters
+                        >
+                            <v-col cols="12" sm="12" md="2">
+                                <v-menu
+                                    v-model="report2.menu_start_date"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="auto"
+                                >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                        v-model="report2.start_date"
+                                        label="Fecha inicio"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
                                     v-model="report2.start_date"
-                                    label="Fecha inicio"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    dense
-                                    v-bind="attrs"
-                                    v-on="on"
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                                v-model="report2.start_date"
-                                @input="report2.menu_start_date = false"
-                            ></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="2">
-                            <v-menu
-                                v-model="report2.menu_end_date"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                            >
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
+                                    @input="report2.menu_start_date = false"
+                                ></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="2">
+                                <v-menu
+                                    v-model="report2.menu_end_date"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="auto"
+                                >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                        v-model="report2.end_date"
+                                        label="Fecha fin"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
                                     v-model="report2.end_date"
-                                    label="Fecha fin"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    dense
-                                    v-bind="attrs"
-                                    v-on="on"
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                                v-model="report2.end_date"
-                                @input="report2.menu_end_date = false"
-                            ></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="8">
-                            <v-divider
-                                class="mx-4"
-                                inset
-                                vertical
-                            ></v-divider>
-                            <v-btn
-                                elevation="2"
-                                large
-                                color="success"
-                                @click="generarRerpot2"
-                                :loading="report2.loading"
-                                :disabled="report2.loading"
-                            >
-                                Descargar
-                                <v-icon>
-                                    mdi-microsoft-excel 
-                                </v-icon>
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </v-expansion-panel-content>
-            </v-expansion-panel>
+                                    @input="report2.menu_end_date = false"
+                                ></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="8">
+                                <v-divider
+                                    class="mx-4"
+                                    inset
+                                    vertical
+                                ></v-divider>
+                                <v-btn
+                                    elevation="2"
+                                    large
+                                    color="success"
+                                    @click="generarRerpot2"
+                                    :loading="report2.loading"
+                                    :disabled="report2.loading"
+                                >
+                                    Descargar
+                                    <v-icon>
+                                        mdi-microsoft-excel 
+                                    </v-icon>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-content>
+                </v-expansion-panel>
 
-            <v-expansion-panel>
-                <v-expansion-panel-header>
-                    <v-row no-gutters>
-                        <v-col cols="12">
-                            <p class="font-weight-bold">
-                                Facturas
-                            </p>
-                        </v-col>
-                    </v-row>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                    <v-row>
-                        <v-col cols="12" sm="12" md="4">
-                            <v-text-field
-                                v-model="report3.file_name"
-                                label="Nombre del archivo Excel"
-                                solo
-                            ></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row
-                        justify="space-around"
-                        no-gutters
-                    >
-                        <v-col cols="12" sm="12" md="2">
-                            <v-menu
-                                v-model="report3.menu_start_date"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                            >
-                            <template v-slot:activator="{ on, attrs }">
+                <v-expansion-panel>
+                    <v-expansion-panel-header>
+                        <v-row no-gutters>
+                            <v-col cols="12">
+                                <p class="font-weight-bold">
+                                    Facturas
+                                </p>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                        <v-row>
+                            <v-col cols="12" sm="12" md="4">
                                 <v-text-field
+                                    v-model="report3.file_name"
+                                    label="Nombre del archivo Excel"
+                                    solo
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row
+                            justify="space-around"
+                            no-gutters
+                        >
+                            <v-col cols="12" sm="12" md="2">
+                                <v-menu
+                                    v-model="report3.menu_start_date"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="auto"
+                                >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                        v-model="report3.start_date"
+                                        label="Fecha inicio"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
                                     v-model="report3.start_date"
-                                    label="Fecha inicio"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    dense
-                                    v-bind="attrs"
-                                    v-on="on"
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                                v-model="report3.start_date"
-                                @input="report3.menu_start_date = false"
-                            ></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="2">
-                            <v-menu
-                                v-model="report3.menu_end_date"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                            >
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
+                                    @input="report3.menu_start_date = false"
+                                ></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="2">
+                                <v-menu
+                                    v-model="report3.menu_end_date"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="auto"
+                                >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                        v-model="report3.end_date"
+                                        label="Fecha fin"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
                                     v-model="report3.end_date"
-                                    label="Fecha fin"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    dense
-                                    v-bind="attrs"
-                                    v-on="on"
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                                v-model="report3.end_date"
-                                @input="report3.menu_end_date = false"
-                            ></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="8">
-                            <v-divider
-                                class="mx-4"
-                                inset
-                                vertical
-                            ></v-divider>
-                            <v-btn
-                                elevation="2"
-                                large
-                                color="success"
-                                @click="generarRerpot3"
-                                :loading="report3.loading"
-                                :disabled="report3.loading"
-                            >
-                                Descargar
-                                <v-icon>
-                                    mdi-microsoft-excel 
-                                </v-icon>
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </v-expansion-panel-content>
-            </v-expansion-panel>
-        </v-expansion-panels>
-
+                                    @input="report3.menu_end_date = false"
+                                ></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="8">
+                                <v-divider
+                                    class="mx-4"
+                                    inset
+                                    vertical
+                                ></v-divider>
+                                <v-btn
+                                    elevation="2"
+                                    large
+                                    color="success"
+                                    @click="generarRerpot3"
+                                    :loading="report3.loading"
+                                    :disabled="report3.loading"
+                                >
+                                    Descargar
+                                    <v-icon>
+                                        mdi-microsoft-excel 
+                                    </v-icon>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-content>
+                </v-expansion-panel>
+            </v-expansion-panels>
+        </v-card>
     </v-container>
 </template>
 

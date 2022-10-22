@@ -1,377 +1,382 @@
 <template>
     <v-container>
-      <vue-toastr ref="mytoast"></vue-toastr>
-      <FormTitle title="Tareas"></FormTitle>
-      <v-row 
-        class="mt-4 mb-2"
+      <v-card
+        elevation="2"
+        class="mx-auto"
+        style="padding:20px;"
       >
-        <v-col
-          cols="12"
-          sm="12"
-          md="6"
+        <vue-toastr ref="mytoast"></vue-toastr>
+        <FormTitle title="Tareas"></FormTitle>
+        <v-row 
+          class="mt-4 mb-2"
         >
-          <v-autocomplete
-            :items="list_project"
-            v-model="editedItem.project_id"
-            item-value="id" 
-            item-text="project_name"
-            label="Proyecto"
-            solo
-            @change="changeProject"
-          ></v-autocomplete>
-
-        </v-col>
-      
-        <v-col
-          cols="12"
-          sm="12"
-          md="6"
-        >
-          <v-autocomplete
-            :items="list_stage"
-            v-model="editedItem.stage_id"
-            item-value="id" 
-            item-text="stage_name"
-            label="Etapa"
-            solo
-            @change="loadGrid"
-          ></v-autocomplete>
-
-        </v-col>
-      </v-row>
-
-
-      <v-data-table
-        :headers="headers"
-        :items="rows"
-        
-        class="elevation-1"
-        :hide-default-footer="true"
-        dense
-        :loading="loading"
-  
-        :page.sync="page"
-        :items-per-page="itemsPerPage"
-        @page-count="pageCount = $event"
-  
-      >
-        <template v-slot:[`top`]>
-          <v-toolbar
-            flat
+          <v-col
+            cols="12"
+            sm="12"
+            md="6"
           >
-            <v-col
-              cols="12"
-              sm="2"
-              md="2"
-            >
-              <v-select
-                :items="[10,15,25,50,100,500]"
-                v-model="itemsPerPage"
-              ></v-select>
-            </v-col>
+            <v-autocomplete
+              :items="list_project"
+              v-model="editedItem.project_id"
+              item-value="id" 
+              item-text="project_name"
+              label="Proyecto"
+              solo
+              @change="changeProject"
+            ></v-autocomplete>
+
+          </v-col>
         
-            <v-spacer></v-spacer>
-            <v-dialog
-              v-model="dialog"
-              max-width="700px"
+          <v-col
+            cols="12"
+            sm="12"
+            md="6"
+          >
+            <v-autocomplete
+              :items="list_stage"
+              v-model="editedItem.stage_id"
+              item-value="id" 
+              item-text="stage_name"
+              label="Etapa"
+              solo
+              @change="loadGrid"
+            ></v-autocomplete>
+
+          </v-col>
+        </v-row>
+
+
+        <v-data-table
+          :headers="headers"
+          :items="rows"
+          
+          class="elevation-1"
+          :hide-default-footer="true"
+          dense
+          :loading="loading"
+    
+          :page.sync="page"
+          :items-per-page="itemsPerPage"
+          @page-count="pageCount = $event"
+    
+        >
+          <template v-slot:[`top`]>
+            <v-toolbar
+              flat
             >
-              <template v-slot:[`activator`]="{ on, attrs }">
-              
-                <v-btn
-                  color="primary"
-                  class="mb-2"
-                  v-bind="attrs"
-                  v-on="on"
-                  :disabled="buttonsEnabled"
-                >
-                  Nuevo
-                </v-btn>
-  
-                <v-divider
-                  class="mx-4"
-                  inset
-                  vertical
-                ></v-divider>
-  
-                <v-btn
-                  color="primary"
-                  class="mb-2"
-                  @click="loadGrid"
-                  :disabled="buttonsEnabled"
-                >
-                  <v-icon
+              <v-col
+                cols="12"
+                sm="2"
+                md="2"
+              >
+                <v-select
+                  :items="[10,15,25,50,100,500]"
+                  v-model="itemsPerPage"
+                ></v-select>
+              </v-col>
+          
+              <v-spacer></v-spacer>
+              <v-dialog
+                v-model="dialog"
+                max-width="700px"
+              >
+                <template v-slot:[`activator`]="{ on, attrs }">
+                
+                  <v-btn
+                    color="primary"
+                    class="mb-2"
+                    v-bind="attrs"
+                    v-on="on"
+                    :disabled="buttonsEnabled"
                   >
-                    mdi-magnify
-                  </v-icon>
-                </v-btn>
-            
-              
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="text-h5">{{ formTitle }}</span>
-                </v-card-title>
-  
-                <v-card-text>
-                  <v-container>
-                    <v-form
-                      ref="form"
-                      v-model="formValid"
-                      
+                    Nuevo
+                  </v-btn>
+    
+                  <v-divider
+                    class="mx-4"
+                    inset
+                    vertical
+                  ></v-divider>
+    
+                  <v-btn
+                    color="primary"
+                    class="mb-2"
+                    @click="loadGrid"
+                    :disabled="buttonsEnabled"
+                  >
+                    <v-icon
                     >
-                      <v-row>
-                        <v-col
-                          cols="12"
-                          sm="12"
-                          md="12"
-                        >
-                          <v-text-field
-                            v-model="editedItem.task_name"
-                            label="Tarea"
-                            dense
-                            :rules="rules.requiered"
-                          ></v-text-field>
-                        </v-col>
+                      mdi-magnify
+                    </v-icon>
+                  </v-btn>
+              
+                
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="text-h5">{{ formTitle }}</span>
+                  </v-card-title>
+    
+                  <v-card-text>
+                    <v-container>
+                      <v-form
+                        ref="form"
+                        v-model="formValid"
                         
-                        <v-col
-                          cols="12"
-                          sm="12"
-                          md="12"
-                        >
-                          <v-text-field
-                            v-model="editedItem.description"
-                            label="Descripcion"
-                            dense
-                          ></v-text-field>
-                        </v-col>
-
-                        <v-col
-                          cols="12"
-                          sm="12"
-                          md="6"
-                        >
-                          <v-menu
-                            v-model="menuStartDate"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto"
+                      >
+                        <v-row>
+                          <v-col
+                            cols="12"
+                            sm="12"
+                            md="12"
                           >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
+                            <v-text-field
+                              v-model="editedItem.task_name"
+                              label="Tarea"
+                              dense
+                              :rules="rules.requiered"
+                            ></v-text-field>
+                          </v-col>
+                          
+                          <v-col
+                            cols="12"
+                            sm="12"
+                            md="12"
+                          >
+                            <v-text-field
+                              v-model="editedItem.description"
+                              label="Descripcion"
+                              dense
+                            ></v-text-field>
+                          </v-col>
+
+                          <v-col
+                            cols="12"
+                            sm="12"
+                            md="6"
+                          >
+                            <v-menu
+                              v-model="menuStartDate"
+                              :close-on-content-click="false"
+                              :nudge-right="40"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  v-model="editedItem.start_date"
+                                  label="Fecha inicio"
+                                  prepend-icon="mdi-calendar"
+                                  readonly
+                                  dense
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  :rules="rules.requiered"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
                                 v-model="editedItem.start_date"
-                                label="Fecha inicio"
-                                prepend-icon="mdi-calendar"
-                                readonly
-                                dense
-                                v-bind="attrs"
-                                v-on="on"
-                                :rules="rules.requiered"
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker
-                              v-model="editedItem.start_date"
-                              @input="menuStartDate = false"
-                            ></v-date-picker>
-                          </v-menu>
-                        </v-col>
+                                @input="menuStartDate = false"
+                              ></v-date-picker>
+                            </v-menu>
+                          </v-col>
 
-                        <v-col
-                          cols="12"
-                          sm="12"
-                          md="6"
-                        >
-                          <v-menu
-                            v-model="menuEndDate"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto"
+                          <v-col
+                            cols="12"
+                            sm="12"
+                            md="6"
                           >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
+                            <v-menu
+                              v-model="menuEndDate"
+                              :close-on-content-click="false"
+                              :nudge-right="40"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  v-model="editedItem.end_date"
+                                  label="Fecha fin"
+                                  prepend-icon="mdi-calendar"
+                                  readonly
+                                  dense
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  :rules="rules.requiered"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
                                 v-model="editedItem.end_date"
-                                label="Fecha fin"
-                                prepend-icon="mdi-calendar"
-                                readonly
-                                dense
-                                v-bind="attrs"
-                                v-on="on"
-                                :rules="rules.requiered"
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker
-                              v-model="editedItem.end_date"
-                              @input="menuEndDate = false"
-                            ></v-date-picker>
-                          </v-menu>
-                        </v-col>
+                                @input="menuEndDate = false"
+                              ></v-date-picker>
+                            </v-menu>
+                          </v-col>
 
-                        <v-col
-                          cols="12"
-                          sm="12"
-                          md="6"
-                        >
-                          <v-menu
-                            v-model="menuStartRealDate"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto"
+                          <v-col
+                            cols="12"
+                            sm="12"
+                            md="6"
                           >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
+                            <v-menu
+                              v-model="menuStartRealDate"
+                              :close-on-content-click="false"
+                              :nudge-right="40"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  v-model="editedItem.start_real_date"
+                                  label="Fecha real inicio"
+                                  prepend-icon="mdi-calendar"
+                                  readonly
+                                  dense
+                                  v-bind="attrs"
+                                  v-on="on"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
                                 v-model="editedItem.start_real_date"
-                                label="Fecha real inicio"
-                                prepend-icon="mdi-calendar"
-                                readonly
-                                dense
-                                v-bind="attrs"
-                                v-on="on"
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker
-                              v-model="editedItem.start_real_date"
-                              @input="menuStartRealDate = false"
-                            ></v-date-picker>
-                          </v-menu>
-                        </v-col>
+                                @input="menuStartRealDate = false"
+                              ></v-date-picker>
+                            </v-menu>
+                          </v-col>
 
-                        <v-col
-                          cols="12"
-                          sm="12"
-                          md="6"
-                        >
-                          <v-menu
-                            v-model="menuEndRealDate"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto"
+                          <v-col
+                            cols="12"
+                            sm="12"
+                            md="6"
                           >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
+                            <v-menu
+                              v-model="menuEndRealDate"
+                              :close-on-content-click="false"
+                              :nudge-right="40"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  v-model="editedItem.end_real_date"
+                                  label="Fecha real fin"
+                                  prepend-icon="mdi-calendar"
+                                  readonly
+                                  dense
+                                  v-bind="attrs"
+                                  v-on="on"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
                                 v-model="editedItem.end_real_date"
-                                label="Fecha real fin"
-                                prepend-icon="mdi-calendar"
-                                readonly
-                                dense
-                                v-bind="attrs"
-                                v-on="on"
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker
-                              v-model="editedItem.end_real_date"
-                              @input="menuEndRealDate = false"
-                            ></v-date-picker>
-                          </v-menu>
-                        </v-col>
+                                @input="menuEndRealDate = false"
+                              ></v-date-picker>
+                            </v-menu>
+                          </v-col>
 
-                        <v-col
-                          cols="12"
-                          sm="12"
-                          md="12"
-                        >
-                        
-                          <v-autocomplete
-                            :items="list_status"
-                            v-model="editedItem.status_code"
-                            item-value="value" 
-                            item-text="description"
-                            label="Estado"
-                            dense
-                            :rules="rules.numRequired"
-                          ></v-autocomplete>
-  
-                        </v-col>
-                      </v-row>
-                    </v-form>
-                  </v-container>
-                </v-card-text>
-  
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="blue darken-1"
-                    text
-                    @click="close"
-                  >
-                    Cancelar
-                  </v-btn>
-                  <v-btn
-                    color="blue darken-1"
-                    text
-                    @click="save"
-                  >
-                    Guardar
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <v-dialog v-model="dialogDelete" max-width="500px">
-              <v-card>
-                <v-card-title class="text-h5">¿Está seguro de eliminar este registro?</v-card-title>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="closeDelete">Cancelar</v-btn>
-                  <v-btn color="blue darken-1" text @click="deleteItemConfirm">Aceptar</v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-toolbar>
-  
-        </template>
-  
-        <template v-slot:[`item.actions`]="{ item }">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(item)"
-            color="primary"
+                          <v-col
+                            cols="12"
+                            sm="12"
+                            md="12"
+                          >
+                          
+                            <v-autocomplete
+                              :items="list_status"
+                              v-model="editedItem.status_code"
+                              item-value="value" 
+                              item-text="description"
+                              label="Estado"
+                              dense
+                              :rules="rules.numRequired"
+                            ></v-autocomplete>
+    
+                          </v-col>
+                        </v-row>
+                      </v-form>
+                    </v-container>
+                  </v-card-text>
+    
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="close"
+                    >
+                      Cancelar
+                    </v-btn>
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="save"
+                    >
+                      Guardar
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+              <v-dialog v-model="dialogDelete" max-width="500px">
+                <v-card>
+                  <v-card-title class="text-h5">¿Está seguro de eliminar este registro?</v-card-title>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closeDelete">Cancelar</v-btn>
+                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">Aceptar</v-btn>
+                    <v-spacer></v-spacer>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-toolbar>
+    
+          </template>
+    
+          <template v-slot:[`item.actions`]="{ item }">
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(item)"
+              color="primary"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteItem(item)"
+              color="error"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+    
+          <template v-slot:[`no-data`]>
+            <v-btn
+              color="primary"
+              @click="initialize"
+              :disabled="buttonsEnabled"
+            >
+              Refrescar
+            </v-btn>
+          </template>
+    
+          <template
+            v-for="header in headers.filter((header) =>
+              header.hasOwnProperty('formatter')
+            )"
+            v-slot:[`item.${header.value}`]="{ value }"
           >
-            mdi-pencil
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(item)"
-            color="error"
-          >
-            mdi-delete
-          </v-icon>
-        </template>
-  
-        <template v-slot:[`no-data`]>
-          <v-btn
-            color="primary"
-            @click="initialize"
-            :disabled="buttonsEnabled"
-          >
-            Refrescar
-          </v-btn>
-        </template>
-  
-        <template
-          v-for="header in headers.filter((header) =>
-            header.hasOwnProperty('formatter')
-          )"
-          v-slot:[`item.${header.value}`]="{ value }"
-        >
-          {{ header.formatter(value) }}
-        </template>
-      </v-data-table>
-  
-      <div class="text-center pt-2">
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-        ></v-pagination>
-      </div>
-  
+            {{ header.formatter(value) }}
+          </template>
+        </v-data-table>
+    
+        <div class="text-center pt-2">
+          <v-pagination
+            v-model="page"
+            :length="pageCount"
+          ></v-pagination>
+        </div>
+      </v-card>
     </v-container>
   </template>
   

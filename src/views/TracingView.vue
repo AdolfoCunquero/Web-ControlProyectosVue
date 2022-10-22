@@ -1,302 +1,307 @@
 <template>
     <v-container>
-      <vue-toastr ref="mytoast"></vue-toastr>
-      <FormTitle title="Seguimientos"></FormTitle>
-      <v-row 
-        class="mt-4 mb-2"
-      >
-        <v-col
-          cols="12"
-          sm="12"
-          md="6"
+        <v-card
+            elevation="2"
+            class="mx-auto"
+            style="padding:20px;"
         >
-          <v-autocomplete
-            :items="list_project"
-            v-model="projectId"
-            item-value="id" 
-            item-text="project_name"
-            label="Proyecto"
-            solo
-            @change="changeProject"
-          ></v-autocomplete>
+            <vue-toastr ref="mytoast"></vue-toastr>
+            <FormTitle title="Seguimientos"></FormTitle>
+            <v-row 
+                class="mt-4 mb-2"
+            >
+                <v-col
+                cols="12"
+                sm="12"
+                md="6"
+                >
+                <v-autocomplete
+                    :items="list_project"
+                    v-model="projectId"
+                    item-value="id" 
+                    item-text="project_name"
+                    label="Proyecto"
+                    solo
+                    @change="changeProject"
+                ></v-autocomplete>
 
-        </v-col>
-      
-        <v-col
-          cols="12"
-          sm="12"
-          md="6"
-        >
-          <v-autocomplete
-            :items="list_stage"
-            v-model="stageId"
-            item-value="id" 
-            item-text="stage_name"
-            label="Etapa"
-            solo
-            @change="loadTasks"
-          ></v-autocomplete>
-
-        </v-col>
-      </v-row>
-      
-      <v-alert
-        border="left"
-        colored-border
-        color="indigo lighten-2"
-        elevation="2"
-        v-if="tasks.length > 0"
-        >
-        <div class="text-h6 active">
-            Tareas
-        </div>
-    </v-alert>
-
-    <v-expansion-panels>
-        <v-expansion-panel v-for="task in tasks" :key="task.id" @click="filterData(task.id)" >
-            <v-expansion-panel-header disable-icon-rotate>
-                {{task.task_name}}
+                </v-col>
             
-                <template v-slot:actions>
-                    <span class="text--secondary">
-                        {{task.status_code_text}}
-                    </span>
+                <v-col
+                cols="12"
+                sm="12"
+                md="6"
+                >
+                <v-autocomplete
+                    :items="list_stage"
+                    v-model="stageId"
+                    item-value="id" 
+                    item-text="stage_name"
+                    label="Etapa"
+                    solo
+                    @change="loadTasks"
+                ></v-autocomplete>
 
-                    <v-divider
-                        class="mx-4"
-                        inset
-                        vertical
-                    ></v-divider>
+                </v-col>
+            </v-row>
+            
+            <v-alert
+                border="left"
+                colored-border
+                color="indigo lighten-2"
+                elevation="2"
+                v-if="tasks.length > 0"
+                >
+                <div class="text-h6 active">
+                    Tareas
+                </div>
+            </v-alert>
+
+            <v-expansion-panels>
+                <v-expansion-panel v-for="task in tasks" :key="task.id" @click="filterData(task.id)" >
+                    <v-expansion-panel-header disable-icon-rotate>
+                        {{task.task_name}}
                     
-                    <v-icon v-if="task.status_code == 1" color="teal">
-                        mdi-checkbox-blank-circle-outline 
-                    </v-icon>
+                        <template v-slot:actions>
+                            <span class="text--secondary">
+                                {{task.status_code_text}}
+                            </span>
 
-                    <v-icon v-if="task.status_code == 2" color="teal">
-                        mdi-progress-wrench 
-                    </v-icon>
-
-                    <v-icon v-if="task.status_code == 3" color="teal">
-                        mdi-check-circle 
-                    </v-icon>
-                </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-                <v-row no-gutters>
-                    <v-col cols="12" md="12">
-                        <v-alert
-                            border="top"
-                            colored-border
-                            type="info"
-                            elevation="2"
-                            v-if="task.description.trim() != ''"
-                            >
-                            {{task.description}}
-                        </v-alert>
-
-                        <v-data-table
-                            :headers="headers"
-                            :items="rows"
+                            <v-divider
+                                class="mx-4"
+                                inset
+                                vertical
+                            ></v-divider>
                             
-                            class="elevation-1"
-                            :hide-default-footer="true"
-                            dense
-                            :loading="loading"
-                    
-                            :page.sync="page"
-                            :items-per-page="itemsPerPage"
-                            @page-count="pageCount = $event"
-                    
-                        >
-                            <template v-slot:[`top`]>
-                                <v-toolbar
-                                    flat
+                            <v-icon v-if="task.status_code == 1" color="teal">
+                                mdi-checkbox-blank-circle-outline 
+                            </v-icon>
+
+                            <v-icon v-if="task.status_code == 2" color="teal">
+                                mdi-progress-wrench 
+                            </v-icon>
+
+                            <v-icon v-if="task.status_code == 3" color="teal">
+                                mdi-check-circle 
+                            </v-icon>
+                        </template>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                        <v-row no-gutters>
+                            <v-col cols="12" md="12">
+                                <v-alert
+                                    border="top"
+                                    colored-border
+                                    type="info"
+                                    elevation="2"
+                                    v-if="task.description.trim() != ''"
+                                    >
+                                    {{task.description}}
+                                </v-alert>
+
+                                <v-data-table
+                                    :headers="headers"
+                                    :items="rows"
+                                    
+                                    class="elevation-1"
+                                    :hide-default-footer="true"
+                                    dense
+                                    :loading="loading"
+                            
+                                    :page.sync="page"
+                                    :items-per-page="itemsPerPage"
+                                    @page-count="pageCount = $event"
+                            
                                 >
-                                    <v-col
-                                        cols="12"
-                                        sm="2"
-                                        md="2"
-                                    >
-                                        <v-select
-                                            :items="[10,15,25,50,100,500]"
-                                            v-model="itemsPerPage"
-                                        ></v-select>
-                                    </v-col>
-                                
-                                    <v-spacer></v-spacer>
-                                    <v-dialog
-                                        v-model="dialog"
-                                        max-width="700px"
-                                    >
-                                    <template v-slot:[`activator`]="{ on, attrs }">
-                                        <v-btn
-                                            color="primary"
-                                            class="mb-2"
-                                            v-bind="attrs"
-                                            v-on="on"
-                                            :disabled="buttonsEnabled"
+                                    <template v-slot:[`top`]>
+                                        <v-toolbar
+                                            flat
                                         >
-                                            Nuevo
-                                        </v-btn>
-                        
-                                        <v-divider
-                                            class="mx-4"
-                                            inset
-                                            vertical
-                                        ></v-divider>
-                        
-                                        <v-btn
-                                            color="primary"
-                                            class="mb-2"
-                                            @click="loadGrid"
-                                            :disabled="buttonsEnabled"
-                                        >
-                                            <v-icon
+                                            <v-col
+                                                cols="12"
+                                                sm="2"
+                                                md="2"
                                             >
-                                                mdi-magnify
-                                            </v-icon>
+                                                <v-select
+                                                    :items="[10,15,25,50,100,500]"
+                                                    v-model="itemsPerPage"
+                                                ></v-select>
+                                            </v-col>
+                                        
+                                            <v-spacer></v-spacer>
+                                            <v-dialog
+                                                v-model="dialog"
+                                                max-width="700px"
+                                            >
+                                            <template v-slot:[`activator`]="{ on, attrs }">
+                                                <v-btn
+                                                    color="primary"
+                                                    class="mb-2"
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    :disabled="buttonsEnabled"
+                                                >
+                                                    Nuevo
+                                                </v-btn>
+                                
+                                                <v-divider
+                                                    class="mx-4"
+                                                    inset
+                                                    vertical
+                                                ></v-divider>
+                                
+                                                <v-btn
+                                                    color="primary"
+                                                    class="mb-2"
+                                                    @click="loadGrid"
+                                                    :disabled="buttonsEnabled"
+                                                >
+                                                    <v-icon
+                                                    >
+                                                        mdi-magnify
+                                                    </v-icon>
+                                                </v-btn>
+                                            </template>
+                                            <v-card>
+                                                <v-card-title>
+                                                    <span class="text-h5">{{ formTitle }}</span>
+                                                </v-card-title>
+                                
+                                                <v-card-text>
+                                                    <v-container>
+                                                        <v-form
+                                                            ref="form"
+                                                            v-model="formValid"
+                                                        >
+                                                        <v-row>
+                                                            <v-col
+                                                                cols="12"
+                                                                sm="12"
+                                                                md="12"
+                                                            >
+                                                                <v-textarea
+                                                                    v-model="editedItem.description"
+                                                                    label="Descripcion"
+                                                                    dense
+                                                                    :rules="rules.requiered"
+                                                                ></v-textarea>
+                                                            </v-col>
+                                                            
+                                                            <v-col
+                                                                cols="12"
+                                                                sm="12"
+                                                                md="12"
+                                                            >
+                                                            
+                                                            <v-autocomplete
+                                                                :items="list_status"
+                                                                v-model="editedItem.tracing_type"
+                                                                item-value="value" 
+                                                                item-text="description"
+                                                                label="Tipo seguimiento"
+                                                                dense
+                                                                :rules="rules.numRequired"
+                                                            ></v-autocomplete>
+                                    
+                                                            </v-col>
+                                                        </v-row>
+                                                        </v-form>
+                                                    </v-container>
+                                                </v-card-text>
+                                
+                                                <v-card-actions>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn
+                                                        color="blue darken-1"
+                                                        text
+                                                        @click="close"
+                                                    >
+                                                        Cancelar
+                                                    </v-btn>
+                                                    <v-btn
+                                                        color="blue darken-1"
+                                                        text
+                                                        @click="save"
+                                                    >
+                                                        Guardar
+                                                    </v-btn>
+                                                </v-card-actions>
+                                            </v-card>
+                                            </v-dialog>
+                                            <v-dialog v-model="dialogDelete" max-width="500px">
+                                                <v-card>
+                                                    <v-card-title class="text-h5">¿Está seguro de eliminar este registro?</v-card-title>
+                                                    <v-card-actions>
+                                                        <v-spacer></v-spacer>
+                                                        <v-btn color="blue darken-1" text @click="closeDelete">Cancelar</v-btn>
+                                                        <v-btn color="blue darken-1" text @click="deleteItemConfirm">Aceptar</v-btn>
+                                                        <v-spacer></v-spacer>
+                                                    </v-card-actions>
+                                                </v-card>
+                                            </v-dialog>
+                                        </v-toolbar>
+                                    </template>
+                            
+                                    <template v-slot:[`item.actions`]="{ item }">
+                                        <v-icon
+                                            small
+                                            class="mr-2"
+                                            @click="editItem(item)"
+                                            color="primary"
+                                        >
+                                            mdi-pencil
+                                        </v-icon>
+                                        <v-icon
+                                            small
+                                            @click="deleteItem(item)"
+                                            color="error"
+                                        >
+                                            mdi-delete
+                                        </v-icon>
+                                    </template>
+
+                                    <template v-slot:[`item.tracing_type`]="{ item }">
+                                        <v-chip
+                                            :color="getChipColor(item.tracing_type)"
+                                            dark
+                                        >
+                                            {{ item.tracing_type_text }}
+                                        </v-chip>
+                                        </template>
+                            
+                                    <template v-slot:[`no-data`]>
+                                        <v-btn
+                                            color="primary"
+                                            @click="initialize"
+                                            :disabled="buttonsEnabled"
+                                        >
+                                            Refrescar
                                         </v-btn>
                                     </template>
-                                    <v-card>
-                                        <v-card-title>
-                                            <span class="text-h5">{{ formTitle }}</span>
-                                        </v-card-title>
-                        
-                                        <v-card-text>
-                                            <v-container>
-                                                <v-form
-                                                    ref="form"
-                                                    v-model="formValid"
-                                                >
-                                                <v-row>
-                                                    <v-col
-                                                        cols="12"
-                                                        sm="12"
-                                                        md="12"
-                                                    >
-                                                        <v-textarea
-                                                            v-model="editedItem.description"
-                                                            label="Descripcion"
-                                                            dense
-                                                            :rules="rules.requiered"
-                                                        ></v-textarea>
-                                                    </v-col>
-                                                    
-                                                    <v-col
-                                                        cols="12"
-                                                        sm="12"
-                                                        md="12"
-                                                    >
-                                                    
-                                                    <v-autocomplete
-                                                        :items="list_status"
-                                                        v-model="editedItem.tracing_type"
-                                                        item-value="value" 
-                                                        item-text="description"
-                                                        label="Tipo seguimiento"
-                                                        dense
-                                                        :rules="rules.numRequired"
-                                                    ></v-autocomplete>
                             
-                                                    </v-col>
-                                                </v-row>
-                                                </v-form>
-                                            </v-container>
-                                        </v-card-text>
-                        
-                                        <v-card-actions>
-                                            <v-spacer></v-spacer>
-                                            <v-btn
-                                                color="blue darken-1"
-                                                text
-                                                @click="close"
-                                            >
-                                                Cancelar
-                                            </v-btn>
-                                            <v-btn
-                                                color="blue darken-1"
-                                                text
-                                                @click="save"
-                                            >
-                                                Guardar
-                                            </v-btn>
-                                        </v-card-actions>
-                                    </v-card>
-                                    </v-dialog>
-                                    <v-dialog v-model="dialogDelete" max-width="500px">
-                                        <v-card>
-                                            <v-card-title class="text-h5">¿Está seguro de eliminar este registro?</v-card-title>
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn color="blue darken-1" text @click="closeDelete">Cancelar</v-btn>
-                                                <v-btn color="blue darken-1" text @click="deleteItemConfirm">Aceptar</v-btn>
-                                                <v-spacer></v-spacer>
-                                            </v-card-actions>
-                                        </v-card>
-                                    </v-dialog>
-                                </v-toolbar>
-                            </template>
-                    
-                            <template v-slot:[`item.actions`]="{ item }">
-                                <v-icon
-                                    small
-                                    class="mr-2"
-                                    @click="editItem(item)"
-                                    color="primary"
-                                >
-                                    mdi-pencil
-                                </v-icon>
-                                <v-icon
-                                    small
-                                    @click="deleteItem(item)"
-                                    color="error"
-                                >
-                                    mdi-delete
-                                </v-icon>
-                            </template>
+                                    <template
+                                        v-for="header in headers.filter((header) =>
+                                            header.hasOwnProperty('formatter')
+                                        )"
+                                        v-slot:[`item.${header.value}`]="{ value }"
+                                        >
+                                        {{ header.formatter(value) }}
+                                    </template>
+                                </v-data-table>
 
-                            <template v-slot:[`item.tracing_type`]="{ item }">
-                                <v-chip
-                                    :color="getChipColor(item.tracing_type)"
-                                    dark
-                                >
-                                    {{ item.tracing_type_text }}
-                                </v-chip>
-                                </template>
-                    
-                            <template v-slot:[`no-data`]>
-                                <v-btn
-                                    color="primary"
-                                    @click="initialize"
-                                    :disabled="buttonsEnabled"
-                                >
-                                    Refrescar
-                                </v-btn>
-                            </template>
-                    
-                            <template
-                                v-for="header in headers.filter((header) =>
-                                    header.hasOwnProperty('formatter')
-                                )"
-                                v-slot:[`item.${header.value}`]="{ value }"
-                                >
-                                {{ header.formatter(value) }}
-                            </template>
-                        </v-data-table>
-
-                        <div class="text-center pt-2">
-                            <v-pagination
-                                v-model="page"
-                                :length="pageCount"
-                            >
-                            </v-pagination>
-                        </div>
-                    </v-col>
-                </v-row>
-            </v-expansion-panel-content>
-        </v-expansion-panel>
-    </v-expansion-panels>
-  
+                                <div class="text-center pt-2">
+                                    <v-pagination
+                                        v-model="page"
+                                        :length="pageCount"
+                                    >
+                                    </v-pagination>
+                                </div>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-content>
+                </v-expansion-panel>
+            </v-expansion-panels>
+        </v-card>
     </v-container>
   </template>
   
