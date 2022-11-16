@@ -308,6 +308,85 @@
                         </v-row>
                     </v-expansion-panel-content>
                 </v-expansion-panel>
+
+                <v-expansion-panel>
+                    <v-expansion-panel-header>
+                        <v-row no-gutters>
+                            <v-col cols="12">
+                                <p class="font-weight-bold">
+                                    Planificacion
+                                </p>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                        <v-row>
+                            <v-col cols="12" sm="12" md="4">
+                                <v-text-field
+                                    v-model="report4.file_name"
+                                    label="Nombre del archivo Excel"
+                                    solo
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row
+                            justify="space-around"
+                            no-gutters
+                        >
+                            <v-col cols="12" sm="12" md="4">
+                                <v-autocomplete
+                                    :items="list_project"
+                                    v-model="report4.project_id"
+                                    item-value="id" 
+                                    item-text="project_name"
+                                    label="Proyecto"
+                                    solo
+                                ></v-autocomplete>
+                            </v-col>
+                            
+                            <v-col cols="12" sm="12" md="8">
+                                <v-divider
+                                    class="mx-4"
+                                    inset
+                                    vertical
+                                ></v-divider>
+                                <v-btn
+                                    elevation="2"
+                                    large
+                                    color="success"
+                                    @click="generarRerpot4('EXCEL')"
+                                    :loading="report4.loading"
+                                    :disabled="report4.loading"
+                                >
+                                    Descargar
+                                    <v-icon>
+                                        mdi-microsoft-excel 
+                                    </v-icon>
+                                </v-btn>
+
+                                <v-divider
+                                    class="mx-4"
+                                    inset
+                                    vertical
+                                ></v-divider>
+
+                                <v-btn
+                                    elevation="2"
+                                    large
+                                    color="info"
+                                    @click="generarRerpot4('PDF')"
+                                    :loading="report4.loading_pdf"
+                                    :disabled="report4.loading_pdf"
+                                >
+                                    Descargar
+                                    <v-icon>
+                                        mdi-file-pdf-box 
+                                    </v-icon>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-content>
+                </v-expansion-panel>
             </v-expansion-panels>
         </v-card>
     </v-container>
@@ -322,6 +401,7 @@ import VueToastr from "vue-toastr";
 export default {
     data: () => ({
         token:"",
+        list_project:[],
         report1:{
             menu_start_date:false,
             menu_end_date:false,
@@ -346,11 +426,30 @@ export default {
             start_date:"",
             end_date:""
         },
+        report4:{
+            project_id: 0,
+            file_name:"Planificacion",
+            loading:false,
+            loading_pdf:false,
+            start_date:"",
+            end_date:""
+        },
     }),
     created() {
         this.token =  this.$session.get("token");
+        this.loadProjects();
     },
     methods:{
+        loadProjects(){
+            let $this = this;
+            axios.get("/project/catalog", { headers: { Authorization: "Bearer " + this.token } }).then(function (res) {
+                $this.list_project = res.data.data;
+                $this.loading = false;
+            }).catch(function (err) {
+              $this.showNotification("Ocurrio un error","error");
+              $this.validateError(err);
+            });
+        },
         validateError(err){
             console.log(err);
             if(err.response.status == 401){
@@ -445,6 +544,39 @@ export default {
                     $this.report3.loading = false;
                 }).catch(function(err){
                     $this.report3.loading = false;
+                    $this.showNotification("Ocurrio un error","error");
+                    $this.validateError(err);
+                })
+            }
+        },
+        generarRerpot4(format){
+            if(this.report4.project_id != 0){
+                
+                let $this = this;
+                this.report4.loading = true;
+                this.report4.loading_pdf = true;
+                let body = {
+                    writer_format:format,
+                    file_name: this.report4.file_name,
+                    project_id: this.report4.project_id
+                }
+                axios.post('/report/planificacion', body, {responseType:'blob', headers: { Authorization: "Bearer " + this.token }}).then(function(response){
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    let extension = '.xlsx'
+                    if (format == 'PDF'){
+                        extension = '.pdf'
+                    }
+                    link.setAttribute('download', $this.report4.file_name+extension);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    $this.report4.loading = false;
+                    $this.report4.loading_pdf = false;
+                }).catch(function(err){
+                    $this.report4.loading = false;
+                    $this.report4.loading_pdf = false;
                     $this.showNotification("Ocurrio un error","error");
                     $this.validateError(err);
                 })

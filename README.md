@@ -22,3 +22,15 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+#### Run local
+- docker build -t web-control-proyectos .
+- docker run -d -p 8080:80 web-control-proyectos
+
+#### Deploy heroku
+
+- heroku container:login
+- docker build -t web-control-proyectos .
+- heroku container:push -a web-control-proyectos web
+- heroku container:release -a web-control-proyectos web
+- heroku logs --tail -a web-control-proyectos
